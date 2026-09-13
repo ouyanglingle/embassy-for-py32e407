@@ -1,0 +1,183 @@
+/**
+  ******************************************************************************
+  * @file    py32e407_it.c
+  * @author  MCU Application Team
+  * @brief   Interrupt Service Routines.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2023 Puya Semiconductor Co.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by Puya under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
+
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+#include "py32e407_it.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private user code ---------------------------------------------------------*/
+/* External variables --------------------------------------------------------*/
+
+/******************************************************************************/
+/*          Cortex-M4 Processor Interruption and Exception Handlers           */
+/******************************************************************************/
+/**
+  * @brief   This function handles NMI exception.
+  * @param  None
+  * @retval None
+  */
+void NMI_Handler(void)
+{
+}
+
+/**
+  * @brief  This function handles Hard Fault exception.
+  * @param  None
+  * @retval None
+  */
+void HardFault_Handler(void)
+{
+  /* Go to infinite loop when Hard Fault exception occurs */
+  while (1)
+  {
+  }
+}
+
+/**
+  * @brief  This function handles Memory Manage exception.
+  * @param  None
+  * @retval None
+  */
+void MemManage_Handler(void)
+{
+  /* Go to infinite loop when Memory Manage exception occurs */
+  while (1)
+  {
+  }
+}
+
+/**
+  * @brief  This function handles Bus Fault exception.
+  * @param  None
+  * @retval None
+  */
+void BusFault_Handler(void)
+{
+  /* Go to infinite loop when Bus Fault exception occurs */
+  while (1)
+  {
+  }
+}
+
+/**
+  * @brief  This function handles Usage Fault exception.
+  * @param  None
+  * @retval None
+  */
+void UsageFault_Handler(void)
+{
+  /* Go to infinite loop when Usage Fault exception occurs */
+  while (1)
+  {
+  }
+}
+
+/**
+  * @brief  This function handles SVCall exception.
+  * @param  None
+  * @retval None
+  */
+void SVC_Handler(void)
+{
+}
+
+/**
+  * @brief  This function handles Debug Monitor exception.
+  * @param  None
+  * @retval None
+  */
+void DebugMon_Handler(void)
+{
+}
+
+/**
+  * @brief  This function handles PendSVC exception.
+  * @param  None
+  * @retval None
+  */
+void PendSV_Handler(void)
+{
+}
+
+/**
+  * @brief  This function handles SysTick Handler.
+  * @param  None
+  * @retval None
+  */
+void SysTick_Handler(void)
+{
+}
+
+/******************************************************************************/
+/* PY32E407 Peripheral Interrupt Handlers                                     */
+/* Add here the Interrupt Handlers for the used peripherals.                  */
+/* For the available peripheral interrupt handler names,                      */
+/* please refer to the startup file.                                          */
+/******************************************************************************/
+/**
+  * @brief This function handles USART1 interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* receive data register not empty */
+  if ((LL_USART_IsActiveFlag_RXNE(USART1) != RESET) && (LL_USART_IsEnabledIT_RXNE(USART1) != RESET))
+  {
+    aRxBuffer[cRxIndex] = (uint8_t)(USART1->DR & (uint8_t)0x00FF);
+
+    /* Wait SR_TXE bit set 1 */
+    while(LL_USART_IsActiveFlag_TXE(USART1) == RESET)
+    {
+    }
+    /* Send received data */
+    USART1->DR = aRxBuffer[cRxIndex];
+
+    cRxIndex++;
+    if(cRxIndex > (RX_MAX_LEN - 1))
+    {
+      cRxIndex = (RX_MAX_LEN - 1);
+    }
+  }
+  if(LL_USART_IsActiveFlag_ORE(USART1) == SET)
+  {
+    /* Clearing the ORE bit */
+    LL_USART_ClearFlag_ORE(USART1);
+    
+    /* Error callback function */
+    APP_SciErrorCallback();
+  }
+}
+
+/************************ (C) COPYRIGHT Puya *****END OF FILE******************/

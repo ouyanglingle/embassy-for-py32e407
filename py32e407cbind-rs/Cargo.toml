@@ -1,0 +1,19 @@
+[package]
+name = "py32e407cbind-rs"
+version = "0.1.0"
+edition = "2021"
+description = "FFI 封装：把 PUYA PY32E407 官方 C LL 驱动编译为 Rust 可调用库"
+license = "BSD-3-Clause"
+
+[lib]
+name = "py32e407cbind_rs"
+path = "src/lib.rs"
+
+# 本 crate 自身不依赖 PAC；它只是对官方 C 驱动的薄封装。
+[dependencies]
+
+[build-dependencies]
+# 用于在 build.rs 里交叉编译 C 源为静态库 libpy32e407_ll.a
+cc = "1.0"
+# 用 libclang 解析官方 C LL 头，自动生成 Rust FFI 绑定（bindings.rs）。
+bindgen = "0.71"

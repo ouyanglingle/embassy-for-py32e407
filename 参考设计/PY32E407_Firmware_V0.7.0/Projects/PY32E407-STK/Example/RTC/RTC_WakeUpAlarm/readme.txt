@@ -1,0 +1,44 @@
+================================================================================
+                                样例使用说明
+                             Sample Description
+================================================================================
+功能描述：
+此样例演示通过RTC闹钟中断每隔1S将MCU从STOP1模式下唤醒，每次唤醒会翻转LED，LED翻转
+间隔为1s。
+
+Function descriptions:
+This example demonstrates waking the MCU from STOP1 mode every 1 second using an
+RTC alarm clock interrupt. Each wake-up will flip the LED, with an LED flip
+interval of 1 second.
+================================================================================
+测试环境：
+测试用板：PY32E407_STK
+MDK版本： 5.28
+IAR版本： 9.20
+GCC版本：GNU Arm Embedded Toolchain 10.3-2021.10
+
+Test environment:
+Test board: PY32E407_STK
+MDK Version: 5.28
+IAR Version: 9.20
+GCC Version: GNU Arm Embedded Toolchain 10.3-2021.10
+================================================================================
+使用步骤：
+1. 编译并下载程序到MCU；
+2. 断开swd连接线并重新上电;
+3. 等待LED灯亮后，按下用户按键，LED灯关闭，进入STOP1模式
+4. RTC开始计时，每隔1s就会通过闹钟中断唤醒MCU，并且翻转LED 
+
+Example execution steps:
+1.Compile and download the program to the MCU.
+2.Disconnect the SWD connection wire and power on again.
+3.Wait for the LED to turn on, then press the user button to turn off the 
+LED and enter the STOP1 mode.
+4.The RTC starts counting, and every 1 second, it will wake up the MCU through 
+the alarm interrupt and toggle the LED.
+================================================================================
+注意事项：
+
+Notes:
+
+================================================================================

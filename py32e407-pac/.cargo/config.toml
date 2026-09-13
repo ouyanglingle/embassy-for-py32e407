@@ -1,0 +1,10 @@
+[build]
+# PY32E407 为 Cortex-M4 内核。
+# 若芯片不带 FPU（SVD 中仅标注 CM4），请改为 "thumbv7m-none-eabi"。
+target = "thumbv7em-none-eabihf"
+
+[target.thumbv7em-none-eabihf]
+rustflags = []
+
+[target.thumbv7m-none-eabi]
+rustflags = []

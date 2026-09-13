@@ -1,0 +1,207 @@
+name: PY32E4 Series
+generated_from_pack: true
+pack_file_release: 1.0.0
+variants:
+- name: PY32E407xC
+  cores:
+  - name: main
+    type: armv7em
+    core_access_options: !Arm
+      ap: !v1 0
+  memory_map:
+  - !Nvm
+    name: IROM1
+    range:
+      start: 0x8000000
+      end: 0x8080000
+    cores:
+    - main
+    access:
+      write: false
+      boot: true
+  - !Generic
+    name: OTP
+    range:
+      start: 0x1fff7000
+      end: 0x1fff7400
+    cores:
+    - main
+    access:
+      write: false
+      execute: false
+  - !Generic
+    name: OPT
+    range:
+      start: 0x1fff7400
+      end: 0x1fff7420
+    cores:
+    - main
+    access:
+      write: false
+      execute: false
+  - !Ram
+    name: IRAM1
+    range:
+      start: 0x20014000
+      end: 0x2001c000
+    cores:
+    - main
+  flash_algorithms:
+  - py102xx_512
+  - py102xx_ob
+  - py102xx_otp
+- name: PY32E407xD
+  cores:
+  - name: main
+    type: armv7em
+    core_access_options: !Arm
+      ap: !v1 0
+  memory_map:
+  - !Nvm
+    name: IROM1
+    range:
+      start: 0x8000000
+      end: 0x8060000
+    cores:
+    - main
+    access:
+      write: false
+      boot: true
+  - !Generic
+    name: OTP
+    range:
+      start: 0x1fff7000
+      end: 0x1fff7400
+    cores:
+    - main
+    access:
+      write: false
+      execute: false
+  - !Generic
+    name: OPT
+    range:
+      start: 0x1fff7400
+      end: 0x1fff7420
+    cores:
+    - main
+    access:
+      write: false
+      execute: false
+  - !Ram
+    name: IRAM1
+    range:
+      start: 0x2001c000
+      end: 0x20024000
+    cores:
+    - main
+  flash_algorithms:
+  - py102xx_512
+  - py102xx_ob
+  - py102xx_otp
+- name: PY32E407xE
+  cores:
+  - name: main
+    type: armv7em
+    core_access_options: !Arm
+      ap: !v1 0
+  memory_map:
+  - !Nvm
+    name: IROM1
+    range:
+      start: 0x8000000
+      end: 0x8080000
+    cores:
+    - main
+    access:
+      write: false
+      boot: true
+  - !Generic
+    name: OTP
+    range:
+      start: 0x1fff7000
+      end: 0x1fff7400
+    cores:
+    - main
+    access:
+      write: false
+      execute: false
+  - !Generic
+    name: OPT
+    range:
+      start: 0x1fff7400
+      end: 0x1fff7420
+    cores:
+    - main
+    access:
+      write: false
+      execute: false
+  - !Ram
+    name: IRAM1
+    range:
+      start: 0x2001c000
+      end: 0x20024000
+    cores:
+    - main
+  flash_algorithms:
+  - py102xx_512
+  - py102xx_ob
+  - py102xx_otp
+flash_algorithms:
+- name: py102xx_512
+  description: Cortex M4 512kB Flash
+  default: true
+  instructions: QvIAAEDyIxHE8gIAxPJnUYFgSParEcz271GBYAFoIfAPAQFgAWlB8AEBAWEAasAEC9RD8gAAxPIAAEXyVVEBYAYhQWBA9v9xgWAAIHBHAL9C8hQBxPICAQhoQPAAQgAgCmBwR0LyEAFD8gACxPICAcTyAAJK9qosC2jbA1y/C2hf6oMzAtXC+ADA9ecLaEPwAQMLYEtoQ/QAY0tgS2hD8IBzS2BP8P8zA2BK9qogv/NPjwC/C2jbA1y/C2hf6oMzAdUQYPbnSGgBIyD0AGBIYEhoIPCAcEhgCGgKaCPqAABC8AECCmBwR7C1QvIUA0PyAAzE8gIDxPIADEr2qi4Av1P4BEzkA1y/U/gETF/qhDQC1cz4AODz51P4BFwB8v8RQPL/FDHqBA5F8AEBQ/gEHD7QSvaqIRTgHGgA9QBwJPABBBxgHGi+9QB+JPCAdBxgU/gETAL1AHJE8AEEQ/gETCbQHGhE8AEEHGAcaETwgHQcYAAkBOAAvwQ0tPUAfwnQFVm09fx/BVH20R1oRfQAJR1g8ee/80+PU/gETOQDXL9T+ARMX+qENMbVzPgAEPPnACCwvULyFAHE8gIBUfgELELwAQJB+AQsCmhC8AICCmAKaELwgHIKYP8iAmBD8gAAxPIAAEr2qiK/80+PUfgEPNsDXL9R+AQ8X+qDMwHVAmD05whoIPACAAhgCGgg8IBwCGBR+AQMwAccvwAgcEdR+AQMQPABAEH4BAwBIHBHAAAAAAAA
+  pc_init: 0x1
+  pc_uninit: 0x51
+  pc_program_page: 0xe9
+  pc_erase_sector: 0x65
+  data_section_offset: 0x230
+  flash_properties:
+    address_range:
+      start: 0x8000000
+      end: 0x8080000
+    page_size: 0x200
+    erased_byte_value: 0xff
+    program_page_timeout: 600
+    erase_sector_timeout: 6000
+    sectors:
+    - size: 0x1000
+      address: 0x0
+- name: py102xx_ob
+  description: Cortex M4 Flash Options
+  instructions: QvIAAEDyIxHE8gIAxPJnUYFgSParEcz271GBYEL2OyHA9hkBwWBG9n9hxPZdQcFgAWgh8A8BAWABaUHwAQEBYQBqwAQL1EPyAADE8gAARfJVUQFgBiFBYED2/3GBYAAgcEcAv0LyFAHE8gIBCGhA8ABACGAIaEDwgEIAIApgcEcAIHBHcLVC8hQBxPICARBoU2jS+AzA0vgQ4FRplWnSaVH4BGyAskbwAQZB+ARsyGCYsghhH/qM8IhhH/qO8MhhoLIIYqiySGKQsohiCGhP8P8yQPQAMAhgCGhA8IBwCGBH8gBAwfb/cAJgQ/IAAMTyAABK9qoiv/NPjwC/UfgEPNsDXL9R+AQ8X+qDMwHVAmD05whoIPQAMAhgCGgg8IByACAKYHC9AL9C8hQBxPICAVH4BCxC8AECQfgELApoQvACAgpgCmhC8IByCmD/IgJgQ/IAAMTyAABK9qoiv/NPj1H4BDzbA1y/UfgEPF/qgzMB1QJg9OcIaCDwAgAIYAhoIPCAcAhgUfgEDMAHHL8AIHBHUfgEDEDwAQBB+AQMASBwRwAAAAAAAA==
+  pc_init: 0x1
+  pc_uninit: 0x65
+  pc_program_page: 0x85
+  pc_erase_sector: 0x81
+  data_section_offset: 0x1a4
+  flash_properties:
+    address_range:
+      start: 0x1fff7400
+      end: 0x1fff7600
+    page_size: 0x200
+    erased_byte_value: 0xff
+    program_page_timeout: 3000
+    erase_sector_timeout: 3000
+    sectors:
+    - size: 0x200
+      address: 0x0
+- name: py102xx_otp
+  description: Cortex M4 1kB OTP
+  instructions: QvIAAEDyIxHE8gIAxPJnUYFgSParEcz271GBYAFoIfAPAQFgAWlB8AEBAWEAasAEC9RD8gAAxPIAAEXyVVEBYAYhQWBA9v9xgWAAIHBHAL9C8hQBxPICAQhoQPAAQgAgCmBwR0LyFAHE8gIBUfgELELwAQJB+AQsCmhC8AICCmAKaELwgHIKYP8iAmBD8gAAxPIAAEr2qiK/80+PUfgEPNsDXL9R+AQ8X+qDMwHVAmD05whoIPACAAhgCGgg8IBwCGBR+AQMwAccvwAgcEdR+AQMQPABAEH4BAwBIHBHAL9C8hQBxPICAVH4BCxC8AECQfgELApoQvACAgpgCmhC8IByCmD/IgJgQ/IAAMTyAABK9qoiv/NPj1H4BDzbA1y/UfgEPF/qgzMB1QJg9OcIaCDwAgAIYAhoIPCAcAhgUfgEDMAHHL8AIHBHUfgEDEDwAQBB+AQMASBwRwC/sLVC8hQDQ/IADMTyAgPE8gAMSvaqLgC/U/gETOQDXL9T+ARMX+qENALVzPgA4PPnU/gEXAHy/xFA8v8UMeoEDkXwAQFD+AQcPtBK9qohFOAcaAD1AHAk8AEEHGAcaL71AH4k8IB0HGBT+ARMAvUAckTwAQRD+ARMJtAcaETwAQQcYBxoRPCAdBxgACQE4AC/BDS09QB/CdAVWbT1/H8FUfbRHWhF9AAlHWDx57/zT49T+ARM5ANcv1P4BExf6oQ0xtXM+AAQ8+cAILC9AAAAAA==
+  pc_init: 0x1
+  pc_uninit: 0x51
+  pc_program_page: 0x15d
+  pc_erase_sector: 0x65
+  data_section_offset: 0x228
+  flash_properties:
+    address_range:
+      start: 0x1fff7000
+      end: 0x1fff7400
+    page_size: 0x200
+    erased_byte_value: 0xff
+    program_page_timeout: 3000
+    erase_sector_timeout: 3000
+    sectors:
+    - size: 0x200
+      address: 0x0

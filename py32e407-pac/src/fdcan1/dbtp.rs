@@ -1,0 +1,91 @@
+#[doc = "Register `DBTP` reader"]
+pub type R = crate::R<DbtpSpec>;
+#[doc = "Register `DBTP` writer"]
+pub type W = crate::W<DbtpSpec>;
+#[doc = "Field `DSJW` reader - Data (Re)Synchronization Jump Width"]
+pub type DsjwR = crate::FieldReader;
+#[doc = "Field `DSJW` writer - Data (Re)Synchronization Jump Width"]
+pub type DsjwW<'a, REG> = crate::FieldWriter<'a, REG, 4>;
+#[doc = "Field `DTSEG2` reader - Data time segment after sample point"]
+pub type Dtseg2R = crate::FieldReader;
+#[doc = "Field `DTSEG2` writer - Data time segment after sample point"]
+pub type Dtseg2W<'a, REG> = crate::FieldWriter<'a, REG, 4>;
+#[doc = "Field `DTSEG1` reader - Data time segment before sample point"]
+pub type Dtseg1R = crate::FieldReader;
+#[doc = "Field `DTSEG1` writer - Data time segment before sample point"]
+pub type Dtseg1W<'a, REG> = crate::FieldWriter<'a, REG, 5>;
+#[doc = "Field `DBRP` reader - Data Bit Rate Prescaler"]
+pub type DbrpR = crate::FieldReader;
+#[doc = "Field `DBRP` writer - Data Bit Rate Prescaler"]
+pub type DbrpW<'a, REG> = crate::FieldWriter<'a, REG, 5>;
+#[doc = "Field `TDC` reader - Transmitter Delay Compensation"]
+pub type TdcR = crate::BitReader;
+#[doc = "Field `TDC` writer - Transmitter Delay Compensation"]
+pub type TdcW<'a, REG> = crate::BitWriter<'a, REG>;
+impl R {
+    #[doc = "Bits 0:3 - Data (Re)Synchronization Jump Width"]
+    #[inline(always)]
+    pub fn dsjw(&self) -> DsjwR {
+        DsjwR::new((self.bits & 0x0f) as u8)
+    }
+    #[doc = "Bits 4:7 - Data time segment after sample point"]
+    #[inline(always)]
+    pub fn dtseg2(&self) -> Dtseg2R {
+        Dtseg2R::new(((self.bits >> 4) & 0x0f) as u8)
+    }
+    #[doc = "Bits 8:12 - Data time segment before sample point"]
+    #[inline(always)]
+    pub fn dtseg1(&self) -> Dtseg1R {
+        Dtseg1R::new(((self.bits >> 8) & 0x1f) as u8)
+    }
+    #[doc = "Bits 16:20 - Data Bit Rate Prescaler"]
+    #[inline(always)]
+    pub fn dbrp(&self) -> DbrpR {
+        DbrpR::new(((self.bits >> 16) & 0x1f) as u8)
+    }
+    #[doc = "Bit 23 - Transmitter Delay Compensation"]
+    #[inline(always)]
+    pub fn tdc(&self) -> TdcR {
+        TdcR::new(((self.bits >> 23) & 1) != 0)
+    }
+}
+impl W {
+    #[doc = "Bits 0:3 - Data (Re)Synchronization Jump Width"]
+    #[inline(always)]
+    pub fn dsjw(&mut self) -> DsjwW<'_, DbtpSpec> {
+        DsjwW::new(self, 0)
+    }
+    #[doc = "Bits 4:7 - Data time segment after sample point"]
+    #[inline(always)]
+    pub fn dtseg2(&mut self) -> Dtseg2W<'_, DbtpSpec> {
+        Dtseg2W::new(self, 4)
+    }
+    #[doc = "Bits 8:12 - Data time segment before sample point"]
+    #[inline(always)]
+    pub fn dtseg1(&mut self) -> Dtseg1W<'_, DbtpSpec> {
+        Dtseg1W::new(self, 8)
+    }
+    #[doc = "Bits 16:20 - Data Bit Rate Prescaler"]
+    #[inline(always)]
+    pub fn dbrp(&mut self) -> DbrpW<'_, DbtpSpec> {
+        DbrpW::new(self, 16)
+    }
+    #[doc = "Bit 23 - Transmitter Delay Compensation"]
+    #[inline(always)]
+    pub fn tdc(&mut self) -> TdcW<'_, DbtpSpec> {
+        TdcW::new(self, 23)
+    }
+}
+#[doc = "\n\nYou can [`read`](crate::Reg::read) this register and get [`dbtp::R`](R). You can [`reset`](crate::Reg::reset), [`write`](crate::Reg::write), [`write_with_zero`](crate::Reg::write_with_zero) this register using [`dbtp::W`](W). You can also [`modify`](crate::Reg::modify) this register. See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+pub struct DbtpSpec;
+impl crate::RegisterSpec for DbtpSpec {
+    type Ux = u32;
+}
+#[doc = "`read()` method returns [`dbtp::R`](R) reader structure"]
+impl crate::Readable for DbtpSpec {}
+#[doc = "`write(|w| ..)` method takes [`dbtp::W`](W) writer structure"]
+impl crate::Writable for DbtpSpec {
+    type Safety = crate::Unsafe;
+}
+#[doc = "`reset()` method sets DBTP to value 0"]
+impl crate::Resettable for DbtpSpec {}

@@ -1,0 +1,10 @@
+# 本 crate 面向 PY32E407（Cortex-M4F）裸机目标。
+[build]
+target = "thumbv7em-none-eabihf"
+
+[target.thumbv7em-none-eabihf]
+# C 侧交叉编译器；Rust 侧静态库（rlib）不需要链接，最终链接由依赖本 crate 的 bin 工程完成。
+linker = "arm-none-eabi-gcc"
+
+# 说明：链接脚本（-Tlink.x）与内存布局（memory.x）由最终的 bin 工程提供，
+# 本 lib crate 自身不链接，因此这里不写 rustflags 的链接参数。

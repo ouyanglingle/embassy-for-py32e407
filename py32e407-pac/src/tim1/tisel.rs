@@ -1,0 +1,77 @@
+#[doc = "Register `TISEL` reader"]
+pub type R = crate::R<TiselSpec>;
+#[doc = "Register `TISEL` writer"]
+pub type W = crate::W<TiselSpec>;
+#[doc = "Field `TI1SEL` reader - "]
+pub type Ti1selR = crate::FieldReader;
+#[doc = "Field `TI1SEL` writer - "]
+pub type Ti1selW<'a, REG> = crate::FieldWriter<'a, REG, 4>;
+#[doc = "Field `TI2SEL` reader - "]
+pub type Ti2selR = crate::FieldReader;
+#[doc = "Field `TI2SEL` writer - "]
+pub type Ti2selW<'a, REG> = crate::FieldWriter<'a, REG, 4>;
+#[doc = "Field `TI3SEL` reader - "]
+pub type Ti3selR = crate::FieldReader;
+#[doc = "Field `TI3SEL` writer - "]
+pub type Ti3selW<'a, REG> = crate::FieldWriter<'a, REG, 4>;
+#[doc = "Field `TI4SEL` reader - "]
+pub type Ti4selR = crate::FieldReader;
+#[doc = "Field `TI4SEL` writer - "]
+pub type Ti4selW<'a, REG> = crate::FieldWriter<'a, REG, 4>;
+impl R {
+    #[doc = "Bits 0:3"]
+    #[inline(always)]
+    pub fn ti1sel(&self) -> Ti1selR {
+        Ti1selR::new((self.bits & 0x0f) as u8)
+    }
+    #[doc = "Bits 8:11"]
+    #[inline(always)]
+    pub fn ti2sel(&self) -> Ti2selR {
+        Ti2selR::new(((self.bits >> 8) & 0x0f) as u8)
+    }
+    #[doc = "Bits 16:19"]
+    #[inline(always)]
+    pub fn ti3sel(&self) -> Ti3selR {
+        Ti3selR::new(((self.bits >> 16) & 0x0f) as u8)
+    }
+    #[doc = "Bits 24:27"]
+    #[inline(always)]
+    pub fn ti4sel(&self) -> Ti4selR {
+        Ti4selR::new(((self.bits >> 24) & 0x0f) as u8)
+    }
+}
+impl W {
+    #[doc = "Bits 0:3"]
+    #[inline(always)]
+    pub fn ti1sel(&mut self) -> Ti1selW<'_, TiselSpec> {
+        Ti1selW::new(self, 0)
+    }
+    #[doc = "Bits 8:11"]
+    #[inline(always)]
+    pub fn ti2sel(&mut self) -> Ti2selW<'_, TiselSpec> {
+        Ti2selW::new(self, 8)
+    }
+    #[doc = "Bits 16:19"]
+    #[inline(always)]
+    pub fn ti3sel(&mut self) -> Ti3selW<'_, TiselSpec> {
+        Ti3selW::new(self, 16)
+    }
+    #[doc = "Bits 24:27"]
+    #[inline(always)]
+    pub fn ti4sel(&mut self) -> Ti4selW<'_, TiselSpec> {
+        Ti4selW::new(self, 24)
+    }
+}
+#[doc = "\n\nYou can [`read`](crate::Reg::read) this register and get [`tisel::R`](R). You can [`reset`](crate::Reg::reset), [`write`](crate::Reg::write), [`write_with_zero`](crate::Reg::write_with_zero) this register using [`tisel::W`](W). You can also [`modify`](crate::Reg::modify) this register. See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+pub struct TiselSpec;
+impl crate::RegisterSpec for TiselSpec {
+    type Ux = u32;
+}
+#[doc = "`read()` method returns [`tisel::R`](R) reader structure"]
+impl crate::Readable for TiselSpec {}
+#[doc = "`write(|w| ..)` method takes [`tisel::W`](W) writer structure"]
+impl crate::Writable for TiselSpec {
+    type Safety = crate::Unsafe;
+}
+#[doc = "`reset()` method sets TISEL to value 0"]
+impl crate::Resettable for TiselSpec {}

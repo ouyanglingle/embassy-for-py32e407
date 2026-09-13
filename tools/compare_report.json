@@ -1,0 +1,421 @@
+{
+  "missing_periph": [],
+  "missing_regs": {
+    "ADC_TypeDef": [
+      "RESERVED1",
+      "RESERVED2",
+      "RESERVED3",
+      "RESERVED4",
+      "RESERVED5",
+      "RESERVED6",
+      "RESERVED7",
+      "RESERVED8"
+    ],
+    "AES_TypeDef": [
+      "RESERVED1",
+      "CTX_KEY",
+      "CTX_CBC_KEY",
+      "CTX_CTR",
+      "CTX_IV",
+      "CTX_MAC",
+      "INGF_STATUS"
+    ],
+    "BKP_TypeDef": [
+      "RESERVED1"
+    ],
+    "COMP_Common_TypeDef": [
+      "CSR_ODD",
+      "FR_ODD",
+      "RESERVED0",
+      "CSR_EVEN",
+      "FR_EVEN"
+    ],
+    "CRC_TypeDef": [
+      "RESERVED1"
+    ],
+    "DBGMCU_TypeDef": [
+      "IDCODE"
+    ],
+    "DMA_Channel_TypeDef": [
+      "CH_CTRLL",
+      "CH_CTRLH",
+      "CH_CFGL",
+      "CH_CFGH",
+      "SA",
+      "RESERVED1",
+      "DA"
+    ],
+    "DMA_TypeDef": [
+      "RESERVED1",
+      "RESERVED2",
+      "RESERVED3",
+      "RESERVED4",
+      "RESERVED5",
+      "RESERVED6",
+      "RESERVED7",
+      "RESERVED8",
+      "RESERVED9",
+      "RESERVED10",
+      "RESERVED11",
+      "RESERVED12",
+      "RESERVED13",
+      "RESERVED14",
+      "RESERVED15",
+      "RESERVED16",
+      "RESERVED17",
+      "RESERVED18",
+      "RESERVED19",
+      "RESERVED20",
+      "RESERVED21",
+      "RESERVED22",
+      "RESERVED23",
+      "RESERVED24"
+    ],
+    "ESMC_TypeDef": [
+      "RESERVED1",
+      "RESERVED2"
+    ],
+    "ETH_TypeDef": [
+      "RESERVED1",
+      "MACRWUFFR",
+      "RESERVED2",
+      "RESERVED5",
+      "RESERVED6",
+      "RESERVED7",
+      "RESERVED8",
+      "RESERVED9",
+      "RESERVED10",
+      "RESERVED11",
+      "DMARIWT",
+      "RESERVED12"
+    ],
+    "FDCAN_GlobalTypeDef": [
+      "RESERVED1",
+      "RESERVED2",
+      "RESERVED3",
+      "RESERVED4",
+      "RESERVED5",
+      "RESERVED6",
+      "RESERVED7"
+    ],
+    "FLASH_TypeDef": [
+      "RESERVED1",
+      "RESERVED2",
+      "RESERVED3"
+    ],
+    "GPIO_TypeDef": [
+      "OSPEEDR",
+      "AFR"
+    ],
+    "I2C_TypeDef": [
+      "TIMEOUTR"
+    ],
+    "LCDC_Common_TypeDef": [
+      "CSR"
+    ],
+    "LCDC_TypeDef": [
+      "DR",
+      "CMDR",
+      "WCFGR",
+      "RCFGR"
+    ],
+    "LPUART_TypeDef": [
+      "RESERVED1"
+    ],
+    "OPA_TypeDef": [
+      "CSR",
+      "RESERVED",
+      "TCMR"
+    ],
+    "PWR_TypeDef": [
+      "SCR"
+    ],
+    "RCC_TypeDef": [
+      "RESERVED1",
+      "RESERVED2",
+      "RESERVED3",
+      "RESERVED4",
+      "RESERVED5",
+      "RESERVED6"
+    ],
+    "RNG_TypeDef": [
+      "LFSR"
+    ],
+    "RTC_TypeDef": [
+      "PRLH",
+      "PRLL",
+      "DIVH",
+      "DIVL",
+      "CNTH",
+      "CNTL",
+      "ALRH",
+      "ALRL"
+    ],
+    "SDIO_TypeDef": [
+      "RESERVED19",
+      "FIFODATA"
+    ],
+    "SPI_TypeDef": [
+      "I2SCFGR"
+    ],
+    "SYSCFG_TypeDef": [
+      "CFGR",
+      "EXTICR",
+      "PAENS",
+      "PBENS",
+      "PCENS",
+      "PDENS",
+      "PEENS",
+      "PFENS",
+      "RESERVED1",
+      "PAANA2ENR",
+      "PBANA2ENR",
+      "PCANA2ENR",
+      "PDANA2ENR",
+      "PEANA2ENR",
+      "PVDINANA2ENR",
+      "RESERVED2"
+    ],
+    "TIM_TypeDef": [
+      "CCMR1",
+      "CCMR2",
+      "RESERVED0"
+    ],
+    "UART_TypeDef": [
+      "RESERVED1"
+    ],
+    "USART_TypeDef": [
+      "DR"
+    ],
+    "USB_OTG_DeviceTypeDef": [
+      "DCFG",
+      "DCTL",
+      "DSTS",
+      "Reserved0C",
+      "DIEPMSK",
+      "DOEPMSK",
+      "DAINT",
+      "DAINTMSK",
+      "Reserved20",
+      "Reserved9",
+      "Reserved"
+    ],
+    "USB_OTG_GlobalTypeDef": [
+      "GOTGCTL",
+      "GOTGINT",
+      "GAHBCFG",
+      "GUSBCFG",
+      "GRSTCTL",
+      "GINTSTS",
+      "GINTMSK",
+      "GRXSTSR",
+      "GRXSTSP",
+      "GRXFSIZ",
+      "DIEPTXF0_HNPTXFSIZ",
+      "HNPTXSTS",
+      "Reserved30",
+      "GCCFG",
+      "CID",
+      "Reserved40",
+      "HPTXFSIZ"
+    ],
+    "USB_OTG_HostChannelTypeDef": [
+      "HCCHAR",
+      "Reserved04",
+      "HCINT",
+      "HCINTMSK",
+      "HCTSIZ",
+      "Reserved14"
+    ],
+    "USB_OTG_HostTypeDef": [
+      "HCFG",
+      "HFNUM",
+      "Reserved40C",
+      "HPTXSTS"
+    ],
+    "USB_OTG_INEndpointTypeDef": [
+      "DIEPCTL",
+      "Reserved04",
+      "DIEPINT",
+      "Reserved0C",
+      "DIEPTSIZ",
+      "Reserved14",
+      "DTXFSTS",
+      "Reserved1C"
+    ],
+    "USB_OTG_OUTEndpointTypeDef": [
+      "DOEPCTL",
+      "Reserved04",
+      "DOEPINT",
+      "Reserved0C",
+      "DOEPTSIZ",
+      "Reserved14"
+    ]
+  },
+  "hal_only": {
+    "adc": [
+      "CCR",
+      "KEYR",
+      "OPTKEYR"
+    ],
+    "comp": [
+      "CR",
+      "CSR_EVEN",
+      "CSR_ODD",
+      "KEYR",
+      "OPTKEYR"
+    ],
+    "dma": [
+      "CFGR",
+      "CH_CFGH",
+      "CH_CFGL",
+      "CH_CTRLH",
+      "CH_CTRLL",
+      "DA",
+      "SA"
+    ],
+    "eth": [
+      "CFGR",
+      "DMARSWTR",
+      "EMR",
+      "FTSR",
+      "IMR",
+      "PR",
+      "RTSR",
+      "SWIER"
+    ],
+    "exti": [
+      "EXTICR"
+    ],
+    "gpio": [
+      "AFR",
+      "EMR1",
+      "EXTICR",
+      "FTSR",
+      "IMR1",
+      "OSPEEDR",
+      "PR",
+      "RTSR",
+      "SWIER"
+    ],
+    "i2c": [
+      "CFGR",
+      "TIMEOUTR"
+    ],
+    "i2s": [
+      "I2SCFGR"
+    ],
+    "irda": [
+      "DR"
+    ],
+    "lcdc": [
+      "CMDR",
+      "CSR",
+      "DR",
+      "RCFGR",
+      "WCFGR"
+    ],
+    "lptim": [
+      "EMR1",
+      "IMR1"
+    ],
+    "opa": [
+      "CSR",
+      "TCMR"
+    ],
+    "pwr": [
+      "EMR1",
+      "FTSR",
+      "IMR1",
+      "PR",
+      "RTSR",
+      "SCR",
+      "SWIER"
+    ],
+    "rcc": [
+      "ACR",
+      "CR1",
+      "PLL"
+    ],
+    "rng": [
+      "LFSR"
+    ],
+    "rtc": [
+      "ALRH",
+      "ALRL",
+      "CNTH",
+      "CNTL",
+      "CR",
+      "CSR",
+      "DIVH",
+      "DIVL",
+      "EMR1",
+      "FTSR",
+      "IMR1",
+      "PR",
+      "PRLH",
+      "PRLL",
+      "RTCCR",
+      "RTSR",
+      "SWIER"
+    ],
+    "sci": [
+      "DR"
+    ],
+    "sd": [
+      "CID",
+      "CID_CRC",
+      "CSD",
+      "CSD_CRC",
+      "ECC",
+      "FIFODATA",
+      "NSAC",
+      "TAAC"
+    ],
+    "smartcard": [
+      "DR"
+    ],
+    "spi": [
+      "I2SCFGR",
+      "NSS"
+    ],
+    "tim": [
+      "CCMR1",
+      "CCMR2",
+      "DCR",
+      "OR1"
+    ],
+    "usart": [
+      "DR"
+    ],
+    "usbd": [
+      "CID",
+      "DAINTMSK",
+      "DCFG",
+      "DCTL",
+      "DIEPCTL",
+      "DIEPINT",
+      "DIEPMSK",
+      "DIEPTXF",
+      "DIEPTXF0_HNPTXFSIZ",
+      "DOEPCTL",
+      "DOEPINT",
+      "DOEPMSK",
+      "DSTS",
+      "DTXFSTS",
+      "GINTSTS",
+      "GOTGINT",
+      "GRXFSIZ",
+      "GRXSTSP"
+    ],
+    "usbh": [
+      "CID",
+      "GINTSTS",
+      "GRXSTSP",
+      "HCCHAR",
+      "HCINT",
+      "HCINTMSK",
+      "HCTSIZ"
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+#[doc = "Register `CFGR5` reader"]
+pub type R = crate::R<Cfgr5Spec>;
+#[doc = "Register `CFGR5` writer"]
+pub type W = crate::W<Cfgr5Spec>;
+#[doc = "Field `DMA2_MAP3` reader - DMA2 ch3 mapping"]
+pub type Dma2Map3R = crate::FieldReader;
+#[doc = "Field `DMA2_MAP3` writer - DMA2 ch3 mapping"]
+pub type Dma2Map3W<'a, REG> = crate::FieldWriter<'a, REG, 7>;
+#[doc = "Field `DMA2_MAP4` reader - DMA2 ch4 mapping"]
+pub type Dma2Map4R = crate::FieldReader;
+#[doc = "Field `DMA2_MAP4` writer - DMA2 ch4 mapping"]
+pub type Dma2Map4W<'a, REG> = crate::FieldWriter<'a, REG, 7>;
+#[doc = "Field `DMA2_MAP5` reader - DMA2 ch5 mapping"]
+pub type Dma2Map5R = crate::FieldReader;
+#[doc = "Field `DMA2_MAP5` writer - DMA2 ch5 mapping"]
+pub type Dma2Map5W<'a, REG> = crate::FieldWriter<'a, REG, 7>;
+#[doc = "Field `DMA2_MAP6` reader - DMA2 ch6 mapping"]
+pub type Dma2Map6R = crate::FieldReader;
+#[doc = "Field `DMA2_MAP6` writer - DMA2 ch6 mapping"]
+pub type Dma2Map6W<'a, REG> = crate::FieldWriter<'a, REG, 7>;
+impl R {
+    #[doc = "Bits 0:6 - DMA2 ch3 mapping"]
+    #[inline(always)]
+    pub fn dma2_map3(&self) -> Dma2Map3R {
+        Dma2Map3R::new((self.bits & 0x7f) as u8)
+    }
+    #[doc = "Bits 8:14 - DMA2 ch4 mapping"]
+    #[inline(always)]
+    pub fn dma2_map4(&self) -> Dma2Map4R {
+        Dma2Map4R::new(((self.bits >> 8) & 0x7f) as u8)
+    }
+    #[doc = "Bits 16:22 - DMA2 ch5 mapping"]
+    #[inline(always)]
+    pub fn dma2_map5(&self) -> Dma2Map5R {
+        Dma2Map5R::new(((self.bits >> 16) & 0x7f) as u8)
+    }
+    #[doc = "Bits 24:30 - DMA2 ch6 mapping"]
+    #[inline(always)]
+    pub fn dma2_map6(&self) -> Dma2Map6R {
+        Dma2Map6R::new(((self.bits >> 24) & 0x7f) as u8)
+    }
+}
+impl W {
+    #[doc = "Bits 0:6 - DMA2 ch3 mapping"]
+    #[inline(always)]
+    pub fn dma2_map3(&mut self) -> Dma2Map3W<'_, Cfgr5Spec> {
+        Dma2Map3W::new(self, 0)
+    }
+    #[doc = "Bits 8:14 - DMA2 ch4 mapping"]
+    #[inline(always)]
+    pub fn dma2_map4(&mut self) -> Dma2Map4W<'_, Cfgr5Spec> {
+        Dma2Map4W::new(self, 8)
+    }
+    #[doc = "Bits 16:22 - DMA2 ch5 mapping"]
+    #[inline(always)]
+    pub fn dma2_map5(&mut self) -> Dma2Map5W<'_, Cfgr5Spec> {
+        Dma2Map5W::new(self, 16)
+    }
+    #[doc = "Bits 24:30 - DMA2 ch6 mapping"]
+    #[inline(always)]
+    pub fn dma2_map6(&mut self) -> Dma2Map6W<'_, Cfgr5Spec> {
+        Dma2Map6W::new(self, 24)
+    }
+}
+#[doc = "\n\nYou can [`read`](crate::Reg::read) this register and get [`cfgr5::R`](R). You can [`reset`](crate::Reg::reset), [`write`](crate::Reg::write), [`write_with_zero`](crate::Reg::write_with_zero) this register using [`cfgr5::W`](W). You can also [`modify`](crate::Reg::modify) this register. See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+pub struct Cfgr5Spec;
+impl crate::RegisterSpec for Cfgr5Spec {
+    type Ux = u32;
+}
+#[doc = "`read()` method returns [`cfgr5::R`](R) reader structure"]
+impl crate::Readable for Cfgr5Spec {}
+#[doc = "`write(|w| ..)` method takes [`cfgr5::W`](W) writer structure"]
+impl crate::Writable for Cfgr5Spec {
+    type Safety = crate::Unsafe;
+}
+#[doc = "`reset()` method sets CFGR5 to value 0"]
+impl crate::Resettable for Cfgr5Spec {}

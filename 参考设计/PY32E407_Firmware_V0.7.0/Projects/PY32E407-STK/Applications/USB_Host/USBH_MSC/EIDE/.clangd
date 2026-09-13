@@ -1,0 +1,12 @@
+CompileFlags:
+    Add:
+        - -Id:\03_software\gcc\10 2021.10\arm-none-eabi\include\newlib-nano
+        - -Id:\03_software\gcc\10 2021.10\arm-none-eabi\include\c++\10.3.1
+        - -Id:\03_software\gcc\10 2021.10\arm-none-eabi\include\c++\10.3.1\arm-none-eabi\thumb\v7e-m+fp\hard
+        - -Id:\03_software\gcc\10 2021.10\arm-none-eabi\include\c++\10.3.1\backward
+        - -Id:\03_software\gcc\10 2021.10\lib\gcc\arm-none-eabi\10.3.1\include
+        - -Id:\03_software\gcc\10 2021.10\lib\gcc\arm-none-eabi\10.3.1\include-fixed
+        - -Id:\03_software\gcc\10 2021.10\arm-none-eabi\include
+    Remove: []
+    CompilationDatabase: ./Project
+    Compiler: D:\03_software\GCC\10 2021.10\bin\arm-none-eabi-gcc.exe

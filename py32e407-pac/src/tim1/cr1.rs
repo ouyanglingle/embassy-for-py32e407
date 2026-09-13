@@ -1,0 +1,161 @@
+#[doc = "Register `CR1` reader"]
+pub type R = crate::R<Cr1Spec>;
+#[doc = "Register `CR1` writer"]
+pub type W = crate::W<Cr1Spec>;
+#[doc = "Field `CEN` reader - "]
+pub type CenR = crate::BitReader;
+#[doc = "Field `CEN` writer - "]
+pub type CenW<'a, REG> = crate::BitWriter<'a, REG>;
+#[doc = "Field `UDIS` reader - "]
+pub type UdisR = crate::BitReader;
+#[doc = "Field `UDIS` writer - "]
+pub type UdisW<'a, REG> = crate::BitWriter<'a, REG>;
+#[doc = "Field `URS` reader - "]
+pub type UrsR = crate::BitReader;
+#[doc = "Field `URS` writer - "]
+pub type UrsW<'a, REG> = crate::BitWriter<'a, REG>;
+#[doc = "Field `OPM` reader - "]
+pub type OpmR = crate::BitReader;
+#[doc = "Field `OPM` writer - "]
+pub type OpmW<'a, REG> = crate::BitWriter<'a, REG>;
+#[doc = "Field `DIR` reader - "]
+pub type DirR = crate::BitReader;
+#[doc = "Field `DIR` writer - "]
+pub type DirW<'a, REG> = crate::BitWriter<'a, REG>;
+#[doc = "Field `CMS` reader - "]
+pub type CmsR = crate::FieldReader;
+#[doc = "Field `CMS` writer - "]
+pub type CmsW<'a, REG> = crate::FieldWriter<'a, REG, 2>;
+#[doc = "Field `ARPE` reader - "]
+pub type ArpeR = crate::BitReader;
+#[doc = "Field `ARPE` writer - "]
+pub type ArpeW<'a, REG> = crate::BitWriter<'a, REG>;
+#[doc = "Field `CKD` reader - "]
+pub type CkdR = crate::FieldReader;
+#[doc = "Field `CKD` writer - "]
+pub type CkdW<'a, REG> = crate::FieldWriter<'a, REG, 2>;
+#[doc = "Field `UIFREMAP` reader - "]
+pub type UifremapR = crate::BitReader;
+#[doc = "Field `UIFREMAP` writer - "]
+pub type UifremapW<'a, REG> = crate::BitWriter<'a, REG>;
+#[doc = "Field `DITHEN` reader - "]
+pub type DithenR = crate::BitReader;
+#[doc = "Field `DITHEN` writer - "]
+pub type DithenW<'a, REG> = crate::BitWriter<'a, REG>;
+impl R {
+    #[doc = "Bit 0"]
+    #[inline(always)]
+    pub fn cen(&self) -> CenR {
+        CenR::new((self.bits & 1) != 0)
+    }
+    #[doc = "Bit 1"]
+    #[inline(always)]
+    pub fn udis(&self) -> UdisR {
+        UdisR::new(((self.bits >> 1) & 1) != 0)
+    }
+    #[doc = "Bit 2"]
+    #[inline(always)]
+    pub fn urs(&self) -> UrsR {
+        UrsR::new(((self.bits >> 2) & 1) != 0)
+    }
+    #[doc = "Bit 3"]
+    #[inline(always)]
+    pub fn opm(&self) -> OpmR {
+        OpmR::new(((self.bits >> 3) & 1) != 0)
+    }
+    #[doc = "Bit 4"]
+    #[inline(always)]
+    pub fn dir(&self) -> DirR {
+        DirR::new(((self.bits >> 4) & 1) != 0)
+    }
+    #[doc = "Bits 5:6"]
+    #[inline(always)]
+    pub fn cms(&self) -> CmsR {
+        CmsR::new(((self.bits >> 5) & 3) as u8)
+    }
+    #[doc = "Bit 7"]
+    #[inline(always)]
+    pub fn arpe(&self) -> ArpeR {
+        ArpeR::new(((self.bits >> 7) & 1) != 0)
+    }
+    #[doc = "Bits 8:9"]
+    #[inline(always)]
+    pub fn ckd(&self) -> CkdR {
+        CkdR::new(((self.bits >> 8) & 3) as u8)
+    }
+    #[doc = "Bit 11"]
+    #[inline(always)]
+    pub fn uifremap(&self) -> UifremapR {
+        UifremapR::new(((self.bits >> 11) & 1) != 0)
+    }
+    #[doc = "Bit 12"]
+    #[inline(always)]
+    pub fn dithen(&self) -> DithenR {
+        DithenR::new(((self.bits >> 12) & 1) != 0)
+    }
+}
+impl W {
+    #[doc = "Bit 0"]
+    #[inline(always)]
+    pub fn cen(&mut self) -> CenW<'_, Cr1Spec> {
+        CenW::new(self, 0)
+    }
+    #[doc = "Bit 1"]
+    #[inline(always)]
+    pub fn udis(&mut self) -> UdisW<'_, Cr1Spec> {
+        UdisW::new(self, 1)
+    }
+    #[doc = "Bit 2"]
+    #[inline(always)]
+    pub fn urs(&mut self) -> UrsW<'_, Cr1Spec> {
+        UrsW::new(self, 2)
+    }
+    #[doc = "Bit 3"]
+    #[inline(always)]
+    pub fn opm(&mut self) -> OpmW<'_, Cr1Spec> {
+        OpmW::new(self, 3)
+    }
+    #[doc = "Bit 4"]
+    #[inline(always)]
+    pub fn dir(&mut self) -> DirW<'_, Cr1Spec> {
+        DirW::new(self, 4)
+    }
+    #[doc = "Bits 5:6"]
+    #[inline(always)]
+    pub fn cms(&mut self) -> CmsW<'_, Cr1Spec> {
+        CmsW::new(self, 5)
+    }
+    #[doc = "Bit 7"]
+    #[inline(always)]
+    pub fn arpe(&mut self) -> ArpeW<'_, Cr1Spec> {
+        ArpeW::new(self, 7)
+    }
+    #[doc = "Bits 8:9"]
+    #[inline(always)]
+    pub fn ckd(&mut self) -> CkdW<'_, Cr1Spec> {
+        CkdW::new(self, 8)
+    }
+    #[doc = "Bit 11"]
+    #[inline(always)]
+    pub fn uifremap(&mut self) -> UifremapW<'_, Cr1Spec> {
+        UifremapW::new(self, 11)
+    }
+    #[doc = "Bit 12"]
+    #[inline(always)]
+    pub fn dithen(&mut self) -> DithenW<'_, Cr1Spec> {
+        DithenW::new(self, 12)
+    }
+}
+#[doc = "\n\nYou can [`read`](crate::Reg::read) this register and get [`cr1::R`](R). You can [`reset`](crate::Reg::reset), [`write`](crate::Reg::write), [`write_with_zero`](crate::Reg::write_with_zero) this register using [`cr1::W`](W). You can also [`modify`](crate::Reg::modify) this register. See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+pub struct Cr1Spec;
+impl crate::RegisterSpec for Cr1Spec {
+    type Ux = u16;
+}
+#[doc = "`read()` method returns [`cr1::R`](R) reader structure"]
+impl crate::Readable for Cr1Spec {}
+#[doc = "`write(|w| ..)` method takes [`cr1::W`](W) writer structure"]
+impl crate::Writable for Cr1Spec {
+    type Safety = crate::Unsafe;
+}
+#[doc = "`reset()` method sets CR1 to value 0"]
+impl crate::Resettable for Cr1Spec {}
