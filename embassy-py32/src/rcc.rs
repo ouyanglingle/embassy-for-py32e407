@@ -48,8 +48,14 @@ const TIMEOUT_SWITCH_LOOPS: u32 = 20_000_000;
 /// RCC 错误类型。
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Error {
-    /// 等待就绪标志/时钟切换超时（见各 `TIMEOUT_*_LOOPS` 常量的量级依据）。
-    Timeout,
+    /// HSE 未在超时内就绪（`CR.HSERDY` 未置位）。常见原因：板上无 HSE 晶振 /
+    /// 晶振频段与 `CFGR2.HSEDRV` 驱动档不符 / 模式选错（Oscillator ↔ Bypass）。
+    HseNotReady,
+    /// PLL 未在超时内锁定（`CR.PLLRDY` 未置位）。常见原因：mul/prediv 组合让
+    /// PLL 输出（VCO）越界，或输入时钟频率不当。
+    PllNotReady,
+    /// SYSCLK 切换到目标源超时（RM：目标源未就绪时硬件不会切换）。
+    SysclkSwitchTimeout,
     /// 配置非法：频率超上限（HCLK > 170 MHz / PCLK > 85 MHz）、PLL 倍频不在
     /// ×2..×257、选择了 HSE/PLL 但缺少对应配置等。
     InvalidConfig,
@@ -60,7 +66,9 @@ pub enum Error {
 impl core::fmt::Display for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let msg = match self {
-            Self::Timeout => "Operation Timed Out",
+            Self::HseNotReady => "HSE not ready (crystal / HSEDRV band / bypass mode)",
+            Self::PllNotReady => "PLL not locked (check mul/prediv)",
+            Self::SysclkSwitchTimeout => "SYSCLK switch timed out",
             Self::InvalidConfig => "Invalid Configuration",
             Self::FlashLatencyVerify => "Flash Latency Verify Failed",
         };
@@ -428,7 +436,7 @@ fn enable_hse(rcc: &pac::rcc::RegisterBlock, hse: &Hse) -> Result<(), Error> {
         }
     }
     if rcc.cr().read().hserdy().bit_is_set() {
-        return Err(Error::Timeout);
+        return Err(Error::HseNotReady);
     }
 
     // 2. 旁路选择（只能在 HSEON=0 时写）
@@ -453,7 +461,7 @@ fn enable_hse(rcc: &pac::rcc::RegisterBlock, hse: &Hse) -> Result<(), Error> {
             return Ok(());
         }
     }
-    Err(Error::Timeout)
+    Err(Error::HseNotReady)
 }
 
 /// 配置并使能 PLL，等待锁定。
@@ -473,7 +481,7 @@ fn setup_pll(rcc: &pac::rcc::RegisterBlock, pll: &Pll, src_is_hse: bool) -> Resu
         }
     }
     if rcc.cr().read().pllrdy().bit_is_set() {
-        return Err(Error::Timeout);
+        return Err(Error::PllNotReady);
     }
 
     // 写 PLL 参数（CFGR3）：PLLSRC（HSI/2 或 HSE；HSE/2 档用 prediv 等效实现）、
@@ -503,7 +511,7 @@ fn setup_pll(rcc: &pac::rcc::RegisterBlock, pll: &Pll, src_is_hse: bool) -> Resu
             return Ok(());
         }
     }
-    Err(Error::Timeout)
+    Err(Error::PllNotReady)
 }
 
 /// 配置时钟树（阻塞，含全部就绪等待与超时）。
@@ -587,7 +595,11 @@ pub fn init(config: Config) -> Result<Clocks, Error> {
         Sysclk::PLL => rcc.cr().read().pllrdy().bit_is_set(),
     };
     if !ready {
-        return Err(Error::Timeout);
+        return Err(match config.sys {
+            Sysclk::HSI => Error::SysclkSwitchTimeout,
+            Sysclk::HSE => Error::HseNotReady,
+            Sysclk::PLL => Error::PllNotReady,
+        });
     }
     let target = sw_bits(config.sys);
     rcc.cfgr().modify(|_, w| unsafe { w.sw().bits(target) });
@@ -599,7 +611,7 @@ pub fn init(config: Config) -> Result<Clocks, Error> {
         }
     }
     if !switched {
-        return Err(Error::Timeout);
+        return Err(Error::SysclkSwitchTimeout);
     }
 
     // ---- 6. 恢复 HPRE / 降低 Flash 等待 / 设 APB 分频 ----

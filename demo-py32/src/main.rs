@@ -36,7 +36,7 @@ use embassy_py32::timer::pwm::{Channel, Pwm, PwmPin};
 use embassy_py32::timer::{self, RoundTo, Timer};
 use embassy_py32::uart;
 use embassy_py32::usart;
-use embassy_py32::{init, rcc, Config, Hertz};
+use embassy_py32::{init, rcc, Config as BoardConfig, Hertz};
 
 // ---- LCD：参考设计的 ST7735 驱动（原样拷贝）+ embedded-hal 兼容适配层 ----
 // `lcd` 里的 `display.rs` 还带整帧缓冲 BufferDisplay 等未全部用到的绘图 API，故允许 dead_code。
@@ -79,20 +79,27 @@ fn delay_ms(syst: &mut SYST, hclk_hz: u32, ms: u32) {
     syst.disable_counter();
 }
 
-/// 时钟配置（写法对齐 STM32F412 例程的 `enable100_mhz()`）：
-/// PLL = HSI/2(8 MHz) × 10 = 80 MHz；HCLK 80 MHz；PCLK1/PCLK2 40 MHz。
-fn enable80mhz() -> Config {
-    let mut config = Config::default();
-    use embassy_py32::rcc;
-    config.rcc.pll_src = rcc::PllSource::HSI;
+fn enable168mhz() -> BoardConfig {
+    let mut config = BoardConfig::default();
+    use embassy_py32::rcc::*;
+    // HSE = 8 MHz（对应 studio 的 HSEFreq = RCC_HSE_4_8MHz，即 4~8MHz 驱动档 = HseDrive::Low）
+    config.rcc.hse = Some(Hse {
+        freq: Hertz(8_000_000),
+        mode: HseMode::Oscillator,
+        drive: HseDrive::Low,
+    });
+    config.rcc.pll_src = rcc::PllSource::HSE;
+    // PLL = 8 MHz / 1 × 21 / 1 = 168 MHz
+    // ⚠️ 关键：**不能**用 studio 的 PREDIV=DIV8 —— 8MHz/8=1MHz 低于 DS 表5-22 的 PLL 输入下限 2MHz，
+    //    PLL 锁不住（这正是启动超时的根因）。改用 PREDIV=DIV1，把倍频交给 MUL。
     config.rcc.pll = Some(rcc::Pll {
-        mul: 10,
         prediv: rcc::PllPreDiv::DIV1,
+        mul: 21,
         postdiv: rcc::PllPostDiv::DIV1,
     });
     config.rcc.sys = rcc::Sysclk::PLL;
     config.rcc.ahb_pre = rcc::AHBPrescaler::DIV1;
-    config.rcc.apb1_pre = rcc::APBPrescaler::DIV2;
+    config.rcc.apb1_pre = rcc::APBPrescaler::DIV4;
     config.rcc.apb2_pre = rcc::APBPrescaler::DIV2;
     config
 }
@@ -103,7 +110,7 @@ fn main() -> ! {
     let _cp = cortex_m::Peripherals::take().unwrap();
 
     // 初始化 HAL：配置时钟树 + 取出全部外设单例
-    let p = init(enable80mhz());
+    let p = init(enable168mhz());
 
     // GPIO 驱动：PB1 / PB2 两路输出，初电平都是低
     // （驱动内部自动使能 GPIOB 时钟并等待生效）
@@ -164,15 +171,9 @@ fn main() -> ! {
 
     // SPI2 从机（硬件 NSS）：PB13=SCK、PB15=MOSI、PB14=MISO、PB12=NSS（AF5）。
     // 仅演示从机构造（无主机时不发起传输，避免阻塞等待），构造后临时值立即析构释放引脚。
-    spi::Spi::new_blocking_slave(
-        p.SPI2,
-        p.PB13,
-        p.PB15,
-        p.PB14,
-        p.PB12,
-        spi::Config::default(),
-    )
-    .unwrap();
+    let mut spi3_cfg = spi::Config::default();
+    spi3_cfg.frequency = Hertz(3_000_000);
+    spi::Spi::new_blocking_slave(p.SPI2, p.PB13, p.PB15, p.PB14, p.PB12, spi3_cfg).unwrap();
 
     // ---- ST7735 TFT LCD（SPI3 主机，来自参考设计的 st7735 驱动）----
     // 接线：SCK=PB3(AF6)、MOSI=PB5(AF6)；DC=PD1、RST=PD0；
@@ -180,7 +181,7 @@ fn main() -> ! {
     // 注意：ST7735 只写、模块无 MISO；而 embassy-py32 的 SPI 驱动构造时必须给一个 MISO 脚，
     // 这里借空闲的 PB4 当"假 MISO"（不接线）。若 PB4(NJTRST) 影响烧录，改成 p.PC11 即可。
     let mut lcd_spi_config = spi::Config::default(); // 模式 0、MSB 优先
-    lcd_spi_config.frequency = Hertz(10_000_000); // PCLK1=40MHz → /4 = 10MHz（首次点亮取稳）
+    lcd_spi_config.frequency = Hertz(30_000_000); // PCLK1=40MHz → /4 = 10MHz（首次点亮取稳）
     let lcd_spi = spi::Spi::new_blocking(p.SPI3, p.PB3, p.PB5, p.PB4, lcd_spi_config).unwrap();
 
     let lcd_dc = Output::new(p.PD1, Level::Low, Speed::VeryHigh);
@@ -213,7 +214,14 @@ fn main() -> ! {
     let mut display = Display::new(lcd);
     display.fill_screen(RGB565::Black);
     display.draw_string(4, 4, "PY32E407", FONT_7X10, RGB565::Green, RGB565::Black);
-    display.draw_string(4, 18, "ST7735 SPI3 OK", FONT_7X10, RGB565::Yellow, RGB565::Black);
+    display.draw_string(
+        4,
+        18,
+        "ST7735 SPI3 OK",
+        FONT_7X10,
+        RGB565::Yellow,
+        RGB565::Black,
+    );
     defmt::info!("ST7735 drawn");
 
     // TIM6：基本定时器，配置为 1 Hz 更新事件，作为主循环节拍。
