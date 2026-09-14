@@ -1,0 +1,18 @@
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# your chip is listed in `probe-rs chip list`
+# runner = "probe-rs run --chip STM32F412RG --speed 10000 --no-catch-reset"
+runner = "probe-rs run --chip STM32F412RG --speed 10000"
+
+[build]
+# Cortex-M0 和 Cortex-M0+（无硬件浮点）
+# rustup target add thumbv6m-none-eabi
+# Cortex-M3（无硬件浮点）
+# rustup target add thumbv7m-none-eabi
+# Cortex-M4（无硬件浮点）和 Cortex-M7（无硬件浮点）
+# rustup target add thumbv7em-none-eabi
+# Cortex-M4F（带硬件浮点）和 Cortex-M7F（带硬件浮点）
+# rustup target add thumbv7em-none-eabihf
+target = "thumbv7em-none-eabihf"
+
+[env]
+DEFMT_LOG = "trace" # trace info

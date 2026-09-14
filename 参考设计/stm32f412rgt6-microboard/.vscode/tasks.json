@@ -1,0 +1,98 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Cargo Build (debug)",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "build"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Cargo Build (release)",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "build",
+                "--release"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Cargo Run (release)",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--release"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Cargo Clean",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "clean"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "ELF Download (release)",
+            "type": "process",
+            "command": "probe-rs",
+            "args": [
+                "download",
+                "--chip",
+                "STM32F412RG",
+                "target/thumbv7em-none-eabihf/release/${workspaceFolderBasename}",
+                "--speed",
+                "10000",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Flash",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-f",
+                "interface/cmsis-dap.cfg",
+                "-c",
+                "transport select swd",
+                "-f",
+                "target/stm32f4x.cfg",
+                "-c",
+                "program target/thumbv7em-none-eabihf/release/${workspaceFolderBasename} preverify verify reset exit"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            // "dependsOn": [
+            //     "Cargo Build (release)"
+            // ],
+            "group": "build"
+        },
+    ]
+}

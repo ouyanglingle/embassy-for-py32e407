@@ -1,0 +1,73 @@
+{
+    /*
+     * Requires the Rust Language Server (rust-analyzer) and Cortex-Debug extensions
+     * https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer
+     * https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug
+     */
+    "version": "0.2.0",
+    "configurations": [
+        {
+            /* Configuration for the STM32F303 Discovery board */
+            "type": "probe-rs-debug",
+            "request": "launch",
+            "name": "Debug (probe-rs)",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "Cargo Build (debug)",
+            "chip": "STM32F412RG",
+            "runtimeExecutable": "probe-rs",
+            "flashingConfig": {
+                "flashingEnabled": true,
+                "haltAfterReset": false,
+            },
+            "coreConfigs": [
+                {
+                    "coreIndex": 0,
+                    "programBinary": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/microboard",
+                    "svdFile": "${workspaceFolder}/STM32F412.svd"
+                }
+            ],
+        },
+        {
+            "name": "Debug (OpenOCD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceFolder}",
+            "executable": "target/thumbv7em-none-eabihf/debug/miniboard",
+            "serverpath": "openocd",
+            "liveWatch": { // Cortex-Debug 的动态监视功能，同 Keil 的全局监视
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "configFiles": [
+                "interface/cmsis-dap.cfg",
+                "target/stm32f4x.cfg"
+            ],
+            "searchDir": [
+                "C:/OpenOCD/scripts"
+            ],
+            "runToEntryPoint": "",
+            "preLaunchTask": "",
+        }
+        // {
+        //     /* Configuration for the STM32F303 Discovery board */
+        //     "type": "cortex-debug",
+        //     "request": "launch",
+        //     "name": "Debug (OpenOCD)",
+        //     "servertype": "openocd",
+        //     "cwd": "${workspaceRoot}",
+        //     "preLaunchTask": "Flash",
+        //     "runToEntryPoint": "main",
+        //     "executable": "./target/thumbv7m-none-eabi/debug/led",
+        //     /* Run `cargo build --example itm` and uncomment this line to run itm example */
+        //     // "executable": "./target/thumbv7em-none-eabihf/debug/examples/itm",
+        //     "device": "STM32F103ZE",
+        //     "configFiles": [
+        //         "${workspaceRoot}/openocd.cfg"
+        //     ],
+        //     "svdFile": "${workspaceRoot}/STM32F103.svd",
+        //     "gdbPath": "/usr/local/gcc-arm-none-eabi/bin/arm-none-eabi-gdb",
+        //     "showDevDebugOutput": "raw"
+        // }
+    ]
+}
