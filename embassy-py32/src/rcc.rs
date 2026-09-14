@@ -54,6 +54,8 @@ pub enum Error {
     /// PLL 未在超时内锁定（`CR.PLLRDY` 未置位）。常见原因：mul/prediv 组合让
     /// PLL 输出（VCO）越界，或输入时钟频率不当。
     PllNotReady,
+    /// PLL 曾锁定，但在切 SYSCLK 前 `PLLRDY` 又掉了（多由随后改 Flash 等待周期 / HPRE 引起）。
+    PllReadyLost,
     /// SYSCLK 切换到目标源超时（RM：目标源未就绪时硬件不会切换）。
     SysclkSwitchTimeout,
     /// 配置非法：频率超上限（HCLK > 170 MHz / PCLK > 85 MHz）、PLL 倍频不在
@@ -68,6 +70,7 @@ impl core::fmt::Display for Error {
         let msg = match self {
             Self::HseNotReady => "HSE not ready (crystal / HSEDRV band / bypass mode)",
             Self::PllNotReady => "PLL not locked (check mul/prediv)",
+            Self::PllReadyLost => "PLL lock lost before SYSCLK switch",
             Self::SysclkSwitchTimeout => "SYSCLK switch timed out",
             Self::InvalidConfig => "Invalid Configuration",
             Self::FlashLatencyVerify => "Flash Latency Verify Failed",
@@ -327,21 +330,93 @@ pub struct Clocks {
     pub apb2: Hertz,
 }
 
-// 时钟结果的进程内全局副本（对齐 embassy 的 rcc::clocks()；单核同步驱动用原子量即可）
-static SYS_HZ: AtomicU32 = AtomicU32::new(HSI_HZ);
-static HCLK_HZ: AtomicU32 = AtomicU32::new(HSI_HZ);
-static APB1_HZ: AtomicU32 = AtomicU32::new(HSI_HZ);
-static APB2_HZ: AtomicU32 = AtomicU32::new(HSI_HZ);
+/// HSE 实际频率（Hz），由 [`init`] 在配置 HSE 时写入；未用 HSE 时为 0。
+///
+/// 寄存器里读不到**外部晶振**的频率，反推时必须知道这个值——所以只能在这里记一份。
+/// （HSI16 是片内已知常量，无需记录。）
+static HSE_HZ: AtomicU32 = AtomicU32::new(0);
+
+/// AHB 预分频比：由 `CFGR.HPRE[3:0]` 反推（RM 6.10.2）。
+#[inline]
+fn ahb_div(bits: u8) -> u32 {
+    match bits {
+        0b1000 => 2,
+        0b1001 => 4,
+        0b1010 => 8,
+        0b1011 => 16,
+        0b1100 => 64,
+        0b1101 => 128,
+        0b1110 => 256,
+        0b1111 => 512,
+        _ => 1, // 0xxx
+    }
+}
+
+/// APB 预分频比：由 `CFGR.PPRE1/PPRE2[2:0]` 反推（RM 6.10.2）。
+#[inline]
+fn apb_div(bits: u8) -> u32 {
+    match bits {
+        0b100 => 2,
+        0b101 => 4,
+        0b110 => 8,
+        0b111 => 16,
+        _ => 1, // 0xx
+    }
+}
 
 /// 查询当前时钟频率（对齐 `embassy_stm32::rcc::clocks()`）。
 ///
+/// **本实现按 RCC 寄存器的实际状态反推**，而不是回显调用方写入的配置：
+/// - `CFGR.SWS` → SYSCLK 实际选的是 HSI / HSE / PLL（若切换没成功，这里立刻看出来）；
+/// - `CFGR.HPRE / PPRE1 / PPRE2` → AHB / APB 实际分频；
+/// - `CFGR3` → PLL 源、PREDIV / POSTDIV / FBDIV（倍频 = FBDIV + 2）。
+///
+/// 唯一无法从寄存器得知的是**外部 HSE 晶振频率**（寄存器里没有），故用 [`init`] 记下的
+/// [`HSE_HZ`]；未配置 HSE 时按 HSI16 计。
+/// 因此若 `Hse.freq` 填错，这里仍会跟着错——要拿真值只能实测引脚（MCO/PWM）。
+///
 /// [`init`](crate::init) 之前返回复位默认值（HSI16，全 1 分频）。
 pub fn clocks() -> Clocks {
+    let rcc = unsafe { &*pac::Rcc::PTR };
+    let cfgr = rcc.cfgr().read();
+    let cfgr3 = rcc.cfgr3().read();
+
+    // SYSCLK：按 CFGR.SWS 的**实际**状态（RM 6.10.2：00=HSI16、01=HSE、10=PLL）
+    let sysclk_hz = match cfgr.sws().bits() {
+        // HSE 直出
+        0b01 => {
+            let f = HSE_HZ.load(Ordering::Relaxed);
+            if f != 0 {
+                f
+            } else {
+                HSI_HZ
+            }
+        }
+        // PLL 输出 = 源 ÷ PREDIV × (FBDIV + 2) ÷ POSTDIV
+        0b10 => {
+            let src_hz = if cfgr3.pllsrc().bit_is_set() {
+                HSE_HZ.load(Ordering::Relaxed) // HSE 直入 PLL
+            } else {
+                HSI_HZ / 2 // HSI16 二分频（RM 6.10.19 PLLSRC=0）
+            };
+            let prediv = 1u32 << cfgr3.pllprediv().bits();
+            let postdiv = 1u32 << cfgr3.pllpostdiv().bits();
+            let mul = u32::from(cfgr3.pllfbdiv().bits()) + 2;
+            src_hz / prediv * mul / postdiv
+        }
+        // 00 = HSI16（也兜住保留值）
+        _ => HSI_HZ,
+    };
+
+    let hclk_hz = sysclk_hz / ahb_div(cfgr.hpre().bits());
+    let pclk1_hz = hclk_hz / apb_div(cfgr.ppre1().bits());
+    let pclk2_hz = hclk_hz / apb_div(cfgr.ppre2().bits());
+
     Clocks {
-        sys: Hertz(SYS_HZ.load(Ordering::Relaxed)),
-        hclk: Hertz(HCLK_HZ.load(Ordering::Relaxed)),
-        apb1: Hertz(APB1_HZ.load(Ordering::Relaxed)),
-        apb2: Hertz(APB2_HZ.load(Ordering::Relaxed)),
+        sys: Hertz(sysclk_hz),
+        hclk: Hertz(hclk_hz),
+        apb1: Hertz(pclk1_hz),
+        apb2: Hertz(pclk2_hz),
     }
 }
 
@@ -514,6 +589,28 @@ fn setup_pll(rcc: &pac::rcc::RegisterBlock, pll: &Pll, src_is_hse: bool) -> Resu
     Err(Error::PllNotReady)
 }
 
+/// 把 VDDD 的内部 LDO 调到高性能电压档（MR / 1.1V）——**这是跑高频的前提**。
+///
+/// `PWR_CR1.VOS` / `SRAM_RETV` 属备份域，**系统复位不会清零**：复位后可能停在低压档，
+/// 此时 HCLK 上不去（高频下 PLL 根本不锁，表现为 `PllNotReady`）。
+///
+/// PY32 官方 C 工程在启动代码 `SystemInit()` 里就做了这三步（本驱动此前遗漏）：
+/// `SET_BIT(RCC->APB1ENR1, PWREN)` → `CLEAR_BIT(PWR->CR1, VOS)` → `CLEAR_BIT(PWR->CR1, SRAM_RETV)`。
+/// 参数与官方 `__HAL_RCC_PWR_CLK_ENABLE` / `SystemInit` 保持一致。
+fn set_pwr_high_voltage(rcc: &pac::rcc::RegisterBlock) {
+    // 1. 使能 PWR 时钟（APB1ENR1.PWREN）
+    rcc.apb1enr1().modify(|_, w| w.pwren().set_bit());
+    let _ = rcc.apb1enr1().read();
+
+    // 2. VOS = 00（高性能档）、SRAM_RETV = 00（与官方 SystemInit 一致）
+    let pwr = unsafe { &*pac::Pwr::PTR };
+    pwr.cr1().modify(|_, w| unsafe {
+        w.vos().bits(0);
+        w.sram_retv().bits(0);
+        w
+    });
+}
+
 /// 配置时钟树（阻塞，含全部就绪等待与超时）。
 ///
 /// 由 [`crate::init`] 调用；执行顺序对照 `HAL_RCC_OscConfig` + `HAL_RCC_ClockConfig`：
@@ -522,6 +619,13 @@ fn setup_pll(rcc: &pac::rcc::RegisterBlock, pll: &Pll, src_is_hse: bool) -> Resu
 /// 成功后结果同时写入全局（供 [`clocks()`] 查询）。
 pub fn init(config: Config) -> Result<Clocks, Error> {
     let rcc = unsafe { &*pac::Rcc::PTR };
+
+    // ---- 0. 先把 LDO 调到高性能电压档（跑高频前提；PWR_CR1 属备份域，系统复位不清）----
+    set_pwr_high_voltage(rcc);
+
+    // 记下 HSE 频率：外部晶振的频率寄存器里读不到，clocks() 反推 SYSCLK 时要用
+    // （本函数末尾返回的也是 clocks() 的反推结果，而不是按配置算出的纸面值）
+    HSE_HZ.store(config.hse.as_ref().map(|h| h.freq.0).unwrap_or(0), Ordering::Relaxed);
 
     // ---- 1. 频率计算与校验（DS：HCLK ≤ 170 MHz，PCLK ≤ 85 MHz）----
     let sysclk_hz;
@@ -598,7 +702,8 @@ pub fn init(config: Config) -> Result<Clocks, Error> {
         return Err(match config.sys {
             Sysclk::HSI => Error::SysclkSwitchTimeout,
             Sysclk::HSE => Error::HseNotReady,
-            Sysclk::PLL => Error::PllNotReady,
+            // 走到这里说明 setup_pll 已等到过 PLLRDY=1，此刻却为 0 → 是"锁了又掉"，与"从未锁"区分开
+            Sysclk::PLL => Error::PllReadyLost,
         });
     }
     let target = sw_bits(config.sys);
@@ -631,18 +736,9 @@ pub fn init(config: Config) -> Result<Clocks, Error> {
         w
     });
 
-    // ---- 7. 结果写入全局，供 clocks() 查询 ----
-    SYS_HZ.store(sysclk_hz, Ordering::Relaxed);
-    HCLK_HZ.store(hclk_hz, Ordering::Relaxed);
-    APB1_HZ.store(pclk1_hz, Ordering::Relaxed);
-    APB2_HZ.store(pclk2_hz, Ordering::Relaxed);
-
-    Ok(Clocks {
-        sys: Hertz(sysclk_hz),
-        hclk: Hertz(hclk_hz),
-        apb1: Hertz(pclk1_hz),
-        apb2: Hertz(pclk2_hz),
-    })
+    // ---- 7. 返回**按寄存器反推**的实际频率（而不是按配置算的纸面值）----
+    // SWS / HPRE / PPRE / CFGR3 若与预期不符，返回值会立刻体现出来；HSE 频率已在开头记入 HSE_HZ。
+    Ok(clocks())
 }
 
 /// 使能 AHB1 总线上的外设时钟（`RCC_AHB1ENR`，位名查 `py32e407_ll_bus.h`）。

@@ -36,7 +36,7 @@ use embassy_py32::timer::pwm::{Channel, Pwm, PwmPin};
 use embassy_py32::timer::{self, RoundTo, Timer};
 use embassy_py32::uart;
 use embassy_py32::usart;
-use embassy_py32::{init, rcc, Config as BoardConfig, Hertz};
+use embassy_py32::{rcc, Config as BoardConfig, Hertz};
 
 // ---- LCD：参考设计的 ST7735 驱动（原样拷贝）+ embedded-hal 兼容适配层 ----
 // `lcd` 里的 `display.rs` 还带整帧缓冲 BufferDisplay 等未全部用到的绘图 API，故允许 dead_code。
@@ -79,29 +79,51 @@ fn delay_ms(syst: &mut SYST, hclk_hz: u32, ms: u32) {
     syst.disable_counter();
 }
 
-fn enable168mhz() -> BoardConfig {
-    let mut config = BoardConfig::default();
-    use embassy_py32::rcc::*;
-    // HSE = 8 MHz（对应 studio 的 HSEFreq = RCC_HSE_4_8MHz，即 4~8MHz 驱动档 = HseDrive::Low）
-    config.rcc.hse = Some(Hse {
-        freq: Hertz(8_000_000),
-        mode: HseMode::Oscillator,
-        drive: HseDrive::Low,
-    });
-    config.rcc.pll_src = rcc::PllSource::HSE;
-    // PLL = 8 MHz / 1 × 21 / 1 = 168 MHz
-    // ⚠️ 关键：**不能**用 studio 的 PREDIV=DIV8 —— 8MHz/8=1MHz 低于 DS 表5-22 的 PLL 输入下限 2MHz，
-    //    PLL 锁不住（这正是启动超时的根因）。改用 PREDIV=DIV1，把倍频交给 MUL。
-    config.rcc.pll = Some(rcc::Pll {
-        prediv: rcc::PllPreDiv::DIV1,
-        mul: 21,
-        postdiv: rcc::PllPostDiv::DIV1,
-    });
-    config.rcc.sys = rcc::Sysclk::PLL;
-    config.rcc.ahb_pre = rcc::AHBPrescaler::DIV1;
-    config.rcc.apb1_pre = rcc::APBPrescaler::DIV4;
-    config.rcc.apb2_pre = rcc::APBPrescaler::DIV2;
-    config
+/// 板级时钟预设（两套并列，切换只改 `main` 里传的枚举值）。
+// 两个预设都保留供选择，当前只用了 Default2，故允许未构造变体。
+#[allow(dead_code)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ClockPreset {
+    /// **第一类默认**：芯片复位默认时钟树 —— HSI16 = 16MHz，AHB / APB1 / APB2 全 1 分频。
+    /// （即 `BoardConfig::default()`：不动任何寄存器就能用。）
+    Default1,
+    /// **第二类默认**：HSE 8MHz → PLL `÷1 ×21` = 168MHz；AHB/1、APB1=/2、APB2=/2
+    /// → HCLK 168MHz、PCLK1 = PCLK2 = 84MHz（APB 上限 85MHz，DS 时钟树）。
+    Default2,
+}
+
+/// 按预设构造板级配置。
+///
+/// 第二类默认的关键约束（实测得出，详见 `rcc::Error` 与上文注释）：
+/// - **PLL 参考频率必须 ≥ 2MHz**（RM §6.7.4：PLL 输入 2~32MHz）。
+///   故 `PREDIV` 用 `/1`（参考 8MHz）而**不是** `/8`（那会得到 1MHz，PLL 永不锁定）。
+/// - HSE 驱动档用 `High`（16~32MHz）：实测该档下 PLL 可锁。
+fn board_config(preset: ClockPreset) -> BoardConfig {
+    match preset {
+        ClockPreset::Default1 => BoardConfig::default(),
+
+        ClockPreset::Default2 => {
+            let mut config = BoardConfig::default();
+            use embassy_py32::rcc::*;
+            config.rcc.hse = Some(Hse {
+                freq: Hertz(8_000_000),
+                mode: HseMode::Oscillator,
+                drive: HseDrive::High, // 16~32 MHz 档
+            });
+            config.rcc.pll_src = PllSource::HSE;
+            // PLL = 8 MHz / 1 × 21 / 1 = 168 MHz（参考 8MHz ∈ 2~32MHz ✓）
+            config.rcc.pll = Some(Pll {
+                prediv: PllPreDiv::DIV1,
+                mul: 21,
+                postdiv: PllPostDiv::DIV1,
+            });
+            config.rcc.sys = Sysclk::PLL;
+            config.rcc.ahb_pre = AHBPrescaler::DIV1;
+            config.rcc.apb1_pre = APBPrescaler::DIV2;
+            config.rcc.apb2_pre = APBPrescaler::DIV2;
+            config
+        }
+    }
 }
 
 /// 主循环：init 配置时钟树后，用 UART2 回显收到的字节，同时每 100ms 翻转一次 PB1 / PB2。
@@ -109,8 +131,35 @@ fn enable168mhz() -> BoardConfig {
 fn main() -> ! {
     let _cp = cortex_m::Peripherals::take().unwrap();
 
-    // 初始化 HAL：配置时钟树 + 取出全部外设单例
-    let p = init(enable168mhz());
+    // 配置时钟树：这里选**第二类默认**（HSE 8MHz → PLL 168MHz、PCLK=84MHz）。
+    // 想回到"第一类默认"（HSI16 复位默认）只需把这个参数改成 `ClockPreset::Default1`。
+    let boot_clocks = match embassy_py32::rcc::init(board_config(ClockPreset::Default2).rcc) {
+        Ok(c) => c,
+        Err(e) => {
+            let r = unsafe { &*embassy_py32::pac::Rcc::PTR };
+            defmt::error!(
+                "rcc init failed: {} | CFGR={:08x} CFGR1={:08x} CFGR2={:08x} CFGR3={:08x} CR={:08x} PWR_CR1={:08x}",
+                defmt::Debug2Format(&e),
+                r.cfgr().read().bits(),
+                r.cfgr1().read().bits(),
+                r.cfgr2().read().bits(),
+                r.cfgr3().read().bits(),
+                r.cr().read().bits(),
+                unsafe { (&*embassy_py32::pac::Pwr::PTR).cr1().read().bits() },
+            );
+            loop {
+                core::hint::spin_loop();
+            }
+        }
+    };
+    defmt::info!(
+        "clocks: sys={} hclk={} pclk1={} pclk2={}",
+        boot_clocks.sys.0,
+        boot_clocks.hclk.0,
+        boot_clocks.apb1.0,
+        boot_clocks.apb2.0
+    );
+    let p = embassy_py32::Peripherals::take();
 
     // GPIO 驱动：PB1 / PB2 两路输出，初电平都是低
     // （驱动内部自动使能 GPIOB 时钟并等待生效）
@@ -165,7 +214,12 @@ fn main() -> ! {
     let mut spi = spi::Spi::new_blocking(p.SPI1, p.PA5, p.PA7, p.PA6, spi_config).unwrap();
     let mut spi_buf = [0xAAu8, 0x55];
     spi.blocking_transfer_in_place(&mut spi_buf).unwrap();
-    defmt::info!("SPI1 ready, loopback={=[u8]:#x}", spi_buf);
+    defmt::info!(
+        "SPI1 ready (请求 {} Hz → 实际 {} Hz), loopback={=[u8]:#x}",
+        spi_config.frequency.0,
+        spi.frequency().0,
+        spi_buf
+    );
     // 16 位帧路径：切 DFF 后发送两个半字（验证 u16 字长可用）。
     spi.blocking_write(&[0x1234u16, 0xABCD]).unwrap();
 
@@ -181,8 +235,10 @@ fn main() -> ! {
     // 注意：ST7735 只写、模块无 MISO；而 embassy-py32 的 SPI 驱动构造时必须给一个 MISO 脚，
     // 这里借空闲的 PB4 当"假 MISO"（不接线）。若 PB4(NJTRST) 影响烧录，改成 p.PC11 即可。
     let mut lcd_spi_config = spi::Config::default(); // 模式 0、MSB 优先
-    lcd_spi_config.frequency = Hertz(30_000_000); // PCLK1=40MHz → /4 = 10MHz（首次点亮取稳）
+    lcd_spi_config.frequency = Hertz(30_000_000); // 请求 30MHz（实际由 PCLK1 分频决定，见下）
     let lcd_spi = spi::Spi::new_blocking(p.SPI3, p.PB3, p.PB5, p.PB4, lcd_spi_config).unwrap();
+    // 实际 SCK：读 CR1.BR 反推（不是请求值）。PCLK1=42MHz 时 30MHz 请求 → 分频档 /2 = 21MHz。
+    let lcd_sck = lcd_spi.frequency();
 
     let lcd_dc = Output::new(p.PD1, Level::Low, Speed::VeryHigh);
     let lcd_rst = Output::new(p.PD0, Level::Low, Speed::VeryHigh);
@@ -208,7 +264,11 @@ fn main() -> ! {
         tft_config,
     );
     lcd.init();
-    defmt::info!("ST7735 init ok (SPI3 @ {} Hz)", lcd_spi_config.frequency.0);
+    defmt::info!(
+        "ST7735 init ok (SPI3 请求 {} Hz → 实际 {} Hz)",
+        lcd_spi_config.frequency.0,
+        lcd_sck.0
+    );
 
     // 用 display 层填色 + 写字，直观验证点亮（同时也让该模块不被判为 dead_code）
     let mut display = Display::new(lcd);
@@ -224,7 +284,7 @@ fn main() -> ! {
     );
     defmt::info!("ST7735 drawn");
 
-    // TIM6：基本定时器，配置为 1 Hz 更新事件，作为主循环节拍。
+    // TIM6：基本定时器，配置为 10 Hz 更新事件，作为主循环节拍。
     // APB1 预分频 = /2，因此定时器内核时钟 CK_INT = 2 × PCLK1 = 80 MHz
     // （RM 第 6 章时钟树 "x1/x2" 分支；可对照 tim6.timer_clk() 的返回值）。
     let tim6 = Timer::new_blocking(p.TIM6, timer::Config::default()).unwrap();

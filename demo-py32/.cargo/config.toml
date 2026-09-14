@@ -1,7 +1,7 @@
 [target.'cfg(all(target_arch = "arm", target_os = "none"))']
 # probe-rs run 没有 --release 参数（编译 profile 由 cargo 自己决定），
 # 用 `cargo run --release` 时 cargo 会自动选 release 产物。
-runner = "probe-rs run --chip-description-path PY32E4_Series.yaml --chip PY32E407xE"
+runner = "probe-rs run --chip-description-path PY32E4_Series.yaml --chip PY32E407xE --speed 10000"
 
 [build]
 # PY32E407 为 Cortex-M4 内核

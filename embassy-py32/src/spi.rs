@@ -547,6 +547,17 @@ impl<'d, T: Instance> Spi<'d, T, Master> {
         init_regs::<T, Master>(&config)?;
         Ok(this)
     }
+
+    /// 当前**实际** SCK 频率——由 `CR1.BR` 与实际外设时钟反推，**不是回显 [`Config::frequency`] 请求值**。
+    ///
+    /// 计算式 `SCK = fPCLK / (2 << BR)`（RM 35.4.1）。构造时按"不超过请求值的最快分频档"选取，
+    /// 因此实际值 ≤ 请求值；请求值高于硬件上限（`fPCLK / 2`）时取上限，
+    /// 低于下限（`fPCLK / 256`）时取下限。从机模式 SCK 由外部提供，本方法仅在主机模式下有意义。
+    #[inline]
+    pub fn frequency(&self) -> Hertz {
+        let br = T::regs().cr1().read().br().bits();
+        Hertz(kernel_clock::<T>() / (2u32 << br))
+    }
 }
 
 impl<'d, T: Instance> Spi<'d, T, Slave> {
