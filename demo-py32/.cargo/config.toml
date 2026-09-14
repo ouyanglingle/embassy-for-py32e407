@@ -1,0 +1,14 @@
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# probe-rs run 没有 --release 参数（编译 profile 由 cargo 自己决定），
+# 用 `cargo run --release` 时 cargo 会自动选 release 产物。
+runner = "probe-rs run --chip-description-path PY32E4_Series.yaml --chip PY32E407xE"
+
+[build]
+# PY32E407 为 Cortex-M4 内核
+target = "thumbv7em-none-eabihf"
+
+[env]
+# defmt 的日志等级是**编译期**过滤的（defmt 宏展开时读该变量）。
+# 不设置时的默认等级是 error —— 也就是说 defmt::info! 会被直接编译掉、连字符串都进不了 .defmt 段。
+# 想看得更细可改成 debug / trace；改完需要重新编译（cargo 会自动感知该变量变化）。
+DEFMT_LOG = "info"

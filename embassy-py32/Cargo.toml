@@ -1,0 +1,8 @@
+[package]
+name = "embassy-py32"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# 本地生成的 PAC（svd2rust 0.37）
+py32e407-pac = { path = "../py32e407-pac" }

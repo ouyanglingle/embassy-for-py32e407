@@ -1,0 +1,24 @@
+[package]
+name = "demo-py32"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# RTT 日志：把日志经 SWD 的 RTT 通道直接打到 probe-rs 终端，不占用 UART
+defmt = "0.3"
+defmt-rtt = "0.4"
+# 本地生成的 PAC（SVD 补丁版）
+py32e407-pac = { path = "../py32e407-pac", features = ["rt", "critical-section"] }
+# 同步外设驱动库
+embassy-py32 = { path = "../embassy-py32" }
+# LCD 兼容层：参考 ST7735 驱动泛型于 embedded-hal 1.0 的 SpiBus/OutputPin/DelayNs
+embedded-hal = "1.0"
+# inline-asm：cortex_m::asm::delay 在 Delay（DelayNs 适配器）里使用
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core", "inline-asm"] }
+cortex-m-rt = "0.7.5"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = true
