@@ -10,6 +10,12 @@
 //! 7. `Timer::new_blocking(p.TIM6, cfg)` 创建 TIM 时基驱动（更新事件节拍）；
 //! 8. `Pwm::new(p.TIM1, Some(PwmPin::new_ch1(p.PA8)), .., cfg)` 创建 TIM1_CH1 PWM 输出；
 //! 9. `rcc::clocks()` 查询配置后的实际频率，供 SysTick 换算。
+//! 10. `esmc::Esmc::new_blocking_with_cs(...)` 创建 ESMC（QSPI）驱动
+//!     （PB10=CLK、PE11=CS0、PE12~PE15=IO0~IO3，16MiB NOR Flash），
+//!     然后读 ID/状态、置 QE、在草稿扇区做一次**擦写自检**，再单线/4 线各走一次 XIP 读。
+//! 11. `ExtiInput::new_blocking(p.PD10, p.EXTI10, Pull::None, TriggerEdge::Rising)`
+//!     创建带 EXTI 的输入（PD10 上升沿，与本板 PY32Studio 工程一致），
+//!     并用 `is_pending()` / `clear_pending()` 轮询边沿挂起位。
 //!
 //! 时钟链路：HSI16 → PLL(HSI/2 × 10) = 80 MHz；PPRE /2 保证 PCLK ≤ 85 MHz；
 //! Flash 等待周期由驱动按 DS 5.3.4 自动设置（75~100 MHz → 4 WS）。
@@ -29,7 +35,9 @@ use embassy_py32::pac::Interrupt as interrupt;
 // 进入符号表，probe-rs 才能识别并解码 RTT 日志。
 use defmt_rtt as _;
 
-use embassy_py32::gpio::{Level, Output, Speed};
+use embassy_py32::esmc;
+use embassy_py32::exti::{ExtiInput, TriggerEdge};
+use embassy_py32::gpio::{Level, Output, Pull, Speed};
 use embassy_py32::lpuart;
 use embassy_py32::spi;
 use embassy_py32::timer::pwm::{Channel, Pwm, PwmPin};
@@ -43,6 +51,12 @@ use embassy_py32::{rcc, Config as BoardConfig, Hertz};
 #[allow(dead_code)]
 mod lcd;
 mod lcd_hal;
+// 电机速度闭环（embassy-py32 移植版）：尚未接入主循环，先允许 dead_code
+#[allow(dead_code)]
+mod motor;
+// PID 控制器（motor.rs 依赖）
+#[allow(dead_code)]
+mod pid;
 
 use lcd::color::RGB565;
 use lcd::display::Display;
@@ -50,6 +64,609 @@ use lcd::font::FONT_7X10;
 use lcd::st7735::{Config as TftConfig, Orientation, St7735Driver};
 use lcd::LcdDriver;
 use lcd_hal::{Delay, OutputPinAdapter, SpiBusAdapter};
+
+/// CORDIC 硬件协处理器最小示例：算 √2 与 cos(π/4)（尚未接入主循环）。
+///
+/// 数据均为 Q1.31 定点（±1.0 ↔ ±2³¹）；SCALE 因子对应的补缩放在打印前完成。
+/// 用法：在 `main` 里调 `cordic_demo(p.CORDIC)`。
+#[allow(dead_code)]
+fn cordic_demo(cordic: embassy_py32::Peri<'static, embassy_py32::peripherals::CORDIC>) {
+    use embassy_py32::cordic::{Config, Cordic, Function, NbWrite, Precision, Scale};
+
+    // √2：SCALE n=2 → 输入 2.0×2⁻² = 0.5，硬件回 √2×2⁻² = 0.3536（RM 表 43-13 n=2 行）
+    let mut cfg = Config::default();
+    cfg.function = Function::SquareRoot;
+    cfg.precision = Precision::Cycles3; // sqrt 残差 2⁻¹⁹（表 43-14）
+    cfg.scale = Scale::N2;
+    let mut cordic = Cordic::new_blocking(cordic, cfg).expect("cordic init");
+
+    let input = [0x4000_0000_i32]; // 0.5（Q1.31）
+    let mut output = [0_i32; 1];
+    cordic.calculate(&input, &mut output).expect("sqrt");
+    let sqrt2 = output[0] as f32 / 2_147_483_648.0 * 4.0; // 结果 ×2ⁿ 补缩放
+    defmt::info!("CORDIC sqrt(2) = {}", sqrt2);
+
+    // cos(π/4)：角度以"圈"为单位，π/4 = 0.125 圈；不写 ARG2，模长按默认 1.0
+    let mut cfg = Config::default();
+    cfg.function = Function::Cosine;
+    cfg.precision = Precision::Cycles6; // cos/sin 残差 2⁻¹⁹（表 43-14）
+    cfg.nb_write = NbWrite::One;
+    cordic.configure(cfg);
+
+    let input = [0x1000_0000_i32]; // 0.125 圈（Q1.31）
+    let mut output = [0_i32; 1];
+    cordic.calculate(&input, &mut output).expect("cos");
+    let v = output[0] as f32 / 2_147_483_648.0;
+    defmt::info!("CORDIC cos(pi/4) = {}", v);
+}
+
+/// EXTI 外部中断最小示例：**PD10 上升沿**。
+///
+/// 引脚取自本板 PY32Studio 生成工程：`参考设计/demo/Core/SRC/gpio.c` 里
+/// `GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING`（`Pull = GPIO_NOPULL`）配的就是 PD10，
+/// 对应向量 `EXTI15_10`（IRQ 40）、服务函数 `HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10)`，
+/// 见 `参考设计/demo/Core/SRC/py32e407_it.c`。故这里照抄同一引脚、同一触发沿。
+///
+/// 使用流程（对齐 embassy-stm32 的阻塞用法）：
+/// 1. [`ExtiInput::new_blocking`]：GPIO 输入 + EXTI 链路（SYSCFG 时钟 → EXTICR 端口选择
+///    → `RTSR` 上升沿 → 清 `PR`）+ `IMR1` 使能；
+/// 2. `is_pending()` 查询挂起位 → `clear_pending()` 清掉（`PR` 是 RC_W1，写 1 清零）；
+/// 3. 自检：直接写 PAC 的 `SWIER` 造一次挂起，验证第 2 步的读/清通路真的可分辨
+///    （不接外部信号时 `PR` 恒为 0，"读到 false"本身什么都证明不了；HAL 面按
+///    embassy-stm32 的裁剪不含软件触发 API，故这一步在 demo 侧点寄存器）。
+///
+/// 想改用中断（本同步库只提供挂起位操作，不注册向量、不动 NVIC）：
+///
+/// ```ignore
+/// #[interrupt]
+/// fn EXTI15_10() {                    // 向量名取自 RM 13.1.3 / PAC 的 Interrupt 枚举
+///     let exti = unsafe { &*embassy_py32::pac::Exti::PTR };
+///     if exti.pr().read().bits() & (1 << 10) != 0 {
+///         exti.pr().write(|w| unsafe { w.bits(1 << 10) });   // 必须先清挂起，否则漏下一次
+///         // ... 处理
+///     }
+/// }
+/// ```
+/// 并在初始化后 `unsafe { cortex_m::peripheral::NVIC::unmask(embassy_py32::pac::Interrupt::EXTI15_10) }`。
+/// 这与本文件里 TIM7 更新中断的写法完全同构。
+fn exti_demo(
+    pin: embassy_py32::Peri<'static, embassy_py32::peripherals::PD10>,
+    ch: embassy_py32::Peri<'static, embassy_py32::peripherals::EXTI10>,
+) {
+    // 与生成工程一致：NOPULL（PD10 已由板上电路决定静态电平）、上升沿触发。
+    // `p.EXTI10` 是这条线的所有权句柄——`PD10`/`PE10` 共用 EXTI10，同时只能取一个。
+    let mut key = ExtiInput::new_blocking(pin, ch, Pull::None, TriggerEdge::Rising);
+    defmt::info!("EXTI ready: PD10 rising edge");
+
+    // ---- 自检：造一次挂起 → 查 → 清 → 再查 ----
+    // 正常空跑时 PR 恒为 0，"读到 false"没有判别力，所以先经 PAC 的 SWIER 置起一次挂起
+    // （RM 13.3.5：写 1 即置起对应 PR 位；`IMR1` 已使能但 NVIC 未 unmask，不会真的进中断）。
+    key.clear_pending(); // 起点先清一次，避免残留值干扰判断
+    let exti = unsafe { &*embassy_py32::pac::Exti::PTR };
+    exti.swier().write(|w| unsafe { w.bits(1 << 10) });
+    let after_sw = key.is_pending();
+    key.clear_pending(); // 写 1 清零
+    let after_clear = key.is_pending();
+    defmt::info!(
+        "EXTI self-test: pending after SWIER = {} -> after clear = {}",
+        after_sw,
+        after_clear
+    );
+    if !after_sw || after_clear {
+        defmt::error!("EXTI self-test FAILED (PR read/clear path)");
+    }
+
+    // 读一次电平：PD10 未接信号时电平不定，这里只证明 IDR 可读。
+    defmt::info!("EXTI PD10 level high = {}", key.is_high());
+
+    // 实际用法是把 `key` 留在主循环里轮询：
+    //     if key.is_pending() { key.clear_pending(); /* 处理一次上升沿 */ }
+    // 本 demo 只做初始化 + 自检，故 `key` 在此析构（EXTI 侧配置保留在寄存器里，
+    // 驱动不会隐式改硬件）。
+}
+
+/// 板载 QSPI NOR Flash 的容量：**16 MiB**（128 Mbit）。
+///
+/// 实测 JEDEC ID = `C8 60 18` → 厂商 `0xC8` = GigaDevice，容量码 `0x18` = 128 Mbit ✓；
+/// 中段 `0x60` 是 **LQ 系列（1.8V 档）**（`0x40` 才是 3.3V 的 Q 系列）。
+/// 16 MiB = 2²⁴，恰好被 **24 位地址**（[`esmc::AddressSize::Bits24`]，ESMC 默认档）
+/// 完全覆盖，不需要 32 位地址模式。
+const FLASH_SIZE: usize = 16 * 1024 * 1024;
+
+/// ESMC **XIP（内存映射）窗口的基址**。
+///
+/// ⚠️ 依据 RM 表 3-1「存储器地址」——`0x9000_0000` 这一行标的就是 **ESMC Bank1**，
+/// 而厂商 `Example/ESMC/ESMC_MemoryMapping_QSPI` 里的
+/// `ApplicationAddress = 0x90000000` 正是这个值，两边对得上。
+///
+/// **别踩的坑**：RM 表 3-5「物理重映射地址」里那个 `0x0400_0000–0x07FF_FFFF`
+/// 是**启动重映射视图**（把 ESMC 当启动源、别名到 0 地址时才用），
+/// 在正常从内部 Flash 启动的配置下 `0x0008_0000–0x07FF_FFFF` 属于**保留区间**——
+/// RM 表 3-1 明确写着"CPU 读写该空间时产生 Response error，进而进入 HardFault"。
+/// 第一版 demo 就写了 `0x0400_0000`，于是上板读到 **Precise data access error@0x04000000**。
+const ESMC_XIP_BASE: usize = 0x9000_0000;
+
+/// 读写自检用的"草稿扇区"：**最后一颗 4 KB 扇区**（`0x00FF_F000`）。
+///
+/// 全片实测为空，用末尾扇区不会覆盖任何原有内容；但这一步是**真的擦写外部 Flash**
+/// （非易失），不想要就把 [`esmc_demo`] 里的自检段落整体删掉。
+const SCRATCH_ADDR: u32 = (FLASH_SIZE as u32) - 4096;
+
+/// 常见 SPI-NOR 命令码 —— 按 **GD25LQ128 手册 Table 2（Standard/Dual/Quad SPI）**
+/// 逐条核对过，不是照抄别的型号。
+const CMD_WRITE_ENABLE: u16 = 0x06; // 写使能（置 WEL）
+const CMD_READ_STATUS1: u16 = 0x05; // 状态寄存器 1（S7-S0）：bit0 = BUSY、bit1 = WEL
+const CMD_WRITE_STATUS1: u16 = 0x01; // 写状态寄存器：**只有这一条，且必须发满 2 字节**（见下）
+const CMD_READ_STATUS2: u16 = 0x35; // 状态寄存器 2（S15-S8）：bit1 = QE
+const CMD_READ_ID: u16 = 0x9F; // JEDEC ID（3 字节）
+const CMD_NORMAL_READ: u16 = 0x03; // 普通读（单线指令/地址、无 Dummy）
+const CMD_PAGE_PROGRAM: u16 = 0x02; // 页编程（单线指令 + 24 位地址 + N 字节数据）
+const CMD_SECTOR_ERASE_4K: u16 = 0x20; // 4KB 扇区擦除（只有指令 + 24 位地址，无数据阶段）
+const CMD_FAST_READ_4O: u16 = 0x6B; // 1-1-4 Quad Output 快速读（Dummy 恒为 8）
+
+// ── 为什么写状态寄存器只能用 `0x01` 且必须 2 字节 ────────────────────────────
+//
+// 手册 Table 2 里写状态寄存器只有一行：`Write Status Register  01H  S7-S0  S15-S8`
+// —— 指令表里**没有 31H**。第 7.4 节另给了两条硬约束：
+//
+//   1. "CS# must be driven high after the eighth or sixteen bit of the data byte has been
+//      latched in. Otherwise, the Write Status Register (WRSR) command is not executed."
+//      → 数据阶段只能是 1 或 2 字节，多一个字节就不执行。
+//   2. "**If CS# is driven high after eighth bit of the data byte, the QE and CMP bits will
+//      be cleared to 0 in SPI mode**" → 只发 8 bit（只写 SR1）反而**把 QE 清掉**。
+//      所以置 QE 必须发满 16 bit（SR1 + SR2）。
+//
+// **本项目踩过这个坑**：厂商例程 `ESMC_ReadWrite_QSPI_Polling` 的 QE 使能段用的是
+// `P25Q64_WRITE_STATUS_REG_1_CMD = 0x31`（单字节）—— 那是 **P25Q64** 的指令集。
+// 换到本板这颗 GigaDevice 后 `0x31` 完全无效：实测 **WEL 不消失、SR2 不变**
+// （WEL 只在写类命令真正执行后才由硬件清零，所以这是"Flash 根本没执行这条命令"的
+// 铁证），退回 `0x01` 发 2 字节立刻生效（SR2 = 0x02）。**换料必须对着该型号手册的
+// 指令表核一遍，不能照抄别的型号的例程。**
+
+/// 状态寄存器 1 里的块保护位（`BP4..BP0`，手册 Table1 的 S6..S2）。
+///
+/// 只要其中任何一位非 0，被保护的地址区**擦除/编程会静默失效**（读还正常），
+/// 是"写了没反应"的经典陷阱，所以自检前先看一眼。
+const SR1_BP_MASK: u8 = 0x7C;
+#[allow(dead_code)]
+const CMD_FAST_READ_4IO: u16 = 0xEB; // 1-4-4 Quad I/O 快速读（Dummy/模式字节按型号）
+
+/// `0x6B` 的 Dummy 周期数：**恒为 8**（W25Q/GD25Q/GD25LQ/P25Q 一致）。
+///
+/// 厂商 XIP 例程用的就是 `P25Q64_1I4O_FAST_READ_CMD`(0x6B) + 8 Dummy + **单线地址** +
+/// **无备用字节**，是三家里最不容易搞错的一组，故 demo 的 XIP 首选它。
+const DUMMY_READ_4O: u8 = 8;
+
+/// `0xEB` 的 Dummy 周期数：**GD25Q128 / GD25LQ128 都是 4**。
+///
+/// 依据 GD25 手册 §7.11 "Quad I/O Fast Read (EBH)"："the 3-byte address (A23-0)
+/// and a 'Continuous Read Mode' byte and **4-dummy clock**"。别的型号不一样
+/// （W25Q 系列常见 6，MX25L 的 QPI 模式可由 C0h 配成 4/6/8），换料要查手册。
+/// 另注意 `0xEB` 比 `0x6B` 多一个模式字节（M[7:0]），写 `0x00` 才不进入连续读模式。
+#[allow(dead_code)]
+const DUMMY_FAST_READ_4IO: u8 = 4;
+
+/// 状态寄存器 1 的 WEL（Write Enable Latch）位。
+///
+/// 写状态寄存器/编程/擦除前必须先置位，命令**完成后硬件自动清零**——所以读它的
+/// 变化可以判断"命令到底有没有发到 Flash 上"。
+const SR1_WEL: u8 = 0x02;
+
+/// 状态寄存器 2 的 QE（Quad Enable）位。
+///
+/// 4 线读（`0x6B`/`0xEB`/`0x32`）**必须先置 QE**，否则 IO2/IO3 仍是 `#WP`/`#HOLD`
+/// 输入、数据线上只有 2 根在动，读回的就是垃圾。官方例程
+/// `ESMC_ReadWrite_QSPI_Polling` 在 4IO 读写前也做这一步
+/// （读 0x35 → `|= 0x02` → 写使能 → 写 0x31）。
+const SR2_QE: u8 = 0x02;
+
+/// 读一个 Flash 状态寄存器（`cmd` 取 0x05 或 0x35）。
+fn read_status_reg(qspi: &mut esmc::Esmc<'_>, cmd: u16) -> Result<u8, esmc::Error> {
+    let read = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: cmd,
+        data_mode: esmc::DataMode::Read,
+        nb_data: 1,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    let mut b = [0u8; 1];
+    qspi.command_read(&read, &mut b)?;
+    Ok(b[0])
+}
+
+/// 发一条只有指令、无数据阶段的命令（写使能等）。
+fn send_cmd(qspi: &mut esmc::Esmc<'_>, cmd: u16) -> Result<(), esmc::Error> {
+    let c = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: cmd,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    qspi.command(&c)
+}
+
+/// 写 `bytes` 到 Flash 状态寄存器。
+///
+/// 本片只能用 `0x01`（[`CMD_WRITE_STATUS1`]）并一次发 2 字节（SR1 + SR2）；
+/// 指令表里没有 `0x31`，只发 1 字节还会把 QE 清掉 —— 详见文件顶部的命令码说明。
+fn write_status_reg(
+    qspi: &mut esmc::Esmc<'_>,
+    cmd: u16,
+    bytes: &[u8],
+) -> Result<(), esmc::Error> {
+    let w = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: cmd,
+        data_mode: esmc::DataMode::Write,
+        nb_data: bytes.len() as u32,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    qspi.command_write(&w, bytes)
+}
+
+/// 轮询状态寄存器 1 的 `BUSY`（bit0）直到清零（写/擦除完成）。
+///
+/// 每次读状态都要走一整条 ESMC 命令（2 MHz 下约 10 µs），故这个循环本身就带延时；
+/// 上限按"最慢的 4KB 扇区擦除"给足（手册 tSE 典型 30 ms / 最大 400 ms，
+/// 折算约 4 万次轮询，这里留 10 倍余量）。
+fn wait_not_busy(qspi: &mut esmc::Esmc<'_>) -> Result<(), esmc::Error> {
+    for _ in 0..500_000 {
+        if read_status_reg(qspi, CMD_READ_STATUS1)? & 0x01 == 0 {
+            return Ok(());
+        }
+    }
+    Err(esmc::Error::Timeout)
+}
+
+/// 从 Flash 读 `buf.len()` 字节到 `buf`（`0x03` 普通读：单线指令 + 24 位单线地址）。
+fn flash_read(qspi: &mut esmc::Esmc<'_>, addr: u32, buf: &mut [u8]) -> Result<(), esmc::Error> {
+    let cmd = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: CMD_NORMAL_READ,
+        address_mode: esmc::AddressMode::SingleLine,
+        address_size: esmc::AddressSize::Bits24,
+        address: addr,
+        data_mode: esmc::DataMode::Read,
+        nb_data: buf.len() as u32,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    qspi.command_read(&cmd, buf)
+}
+
+/// 向 Flash 写 `data`（`0x02` 页编程：单线指令 + 24 位单线地址 + 数据）。
+///
+/// 注意 NOR 的编程只能把 1 变成 0，所以调用前该地址必须已擦除过；
+/// 且**不能跨 256 字节页边界**（跨页会回到页首覆盖）。
+fn flash_program(qspi: &mut esmc::Esmc<'_>, addr: u32, data: &[u8]) -> Result<(), esmc::Error> {
+    send_cmd(qspi, CMD_WRITE_ENABLE)?;
+    let cmd = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: CMD_PAGE_PROGRAM,
+        address_mode: esmc::AddressMode::SingleLine,
+        address_size: esmc::AddressSize::Bits24,
+        address: addr,
+        data_mode: esmc::DataMode::Write,
+        nb_data: data.len() as u32,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    qspi.command_write(&cmd, data)?;
+    wait_not_busy(qspi)
+}
+
+/// 擦除一个 4KB 扇区（`0x20`：只有指令 + 24 位地址，**没有数据阶段**）。
+fn flash_erase_sector(qspi: &mut esmc::Esmc<'_>, addr: u32) -> Result<(), esmc::Error> {
+    send_cmd(qspi, CMD_WRITE_ENABLE)?;
+    let cmd = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: CMD_SECTOR_ERASE_4K,
+        address_mode: esmc::AddressMode::SingleLine,
+        address_size: esmc::AddressSize::Bits24,
+        address: addr,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    qspi.command(&cmd)?;
+    wait_not_busy(qspi)
+}
+
+/// 用 `cmd` 配置一次 XIP、回读 `XIPEN`、peek `ESMC_XIP_BASE + offset` 处的 u32，然后退出 XIP。
+///
+/// `0x9000_0000` 是 ESMC 的 XIP 窗口（RM 表 3-1「ESMC Bank1」）。返回值就是 peek 到的
+/// 内容（`None` = 配置失败或 `XIPEN` 没置上），便于调用方把单线/4 线两组结果放一起比。
+fn xip_peek(
+    qspi: &mut esmc::Esmc<'_>,
+    cmd: &esmc::Command,
+    label: &str,
+    offset: usize,
+) -> Option<u32> {
+    let addr = ESMC_XIP_BASE + offset;
+    let mut out = None;
+    match qspi.memory_mapped(cmd) {
+        Ok(()) => {
+            if qspi.xip_enabled() {
+                // XIPEN 回读确认后再解引用：XIPEN=0 时访问映射区会把总线锁成 busy
+                // （RM 30.3.4.2）。第一版没查，读 0x0400_0000 直接 BusFault。
+                let w = unsafe { core::ptr::read_volatile(addr as *const u32) };
+                defmt::info!("ESMC XIP({=str}) @{=usize:#x} = {=u32:#x}", label, addr, w);
+                out = Some(w);
+            } else {
+                defmt::error!("ESMC XIP({=str}): XIPEN 没置上", label);
+            }
+        }
+        Err(e) => defmt::error!(
+            "ESMC XIP({=str}) 配置失败: {}",
+            label,
+            defmt::Display2Format(&e)
+        ),
+    }
+    // 退出 XIP 回到间接模式，便于下一轮重新配置。
+    if let Err(e) = qspi.exit_xip() {
+        defmt::error!("ESMC exit XIP 失败: {}", defmt::Display2Format(&e));
+    }
+    out
+}
+
+/// ESMC（QSPI）示例：读 ID/状态 → 置 QE → 草稿扇区擦写自检 → 单线/4 线 XIP 读对比。
+///
+/// 引脚为**本板实际接线**（与 PY32Studio 生成工程的 `HAL_ESMC_MspInit` 逐字一致）：
+/// `PB10 = ESMC_CLK`、`PE12~PE15 = ESMC_BK1_IO0~IO3`、`PE11 = ESMC_CS0_NCS`，
+/// 全部 `AF10`。这组引脚与 demo 其它外设（PB1/PB2、PB3~PB5、PB12~PB15、
+/// UART2 的 PC12/PD2、PE2/PE3 …）都不冲突。
+///
+/// 本片实测：Mode0 + 2 MHz + 24 位地址下，间接读写（4KB 擦除 / 页编程）、单线 XIP 与
+/// **4 线 XIP** 均已跑通。
+fn esmc_demo(
+    peri: embassy_py32::Peri<'static, embassy_py32::peripherals::ESMC>,
+    clk: embassy_py32::Peri<'static, impl esmc::ClkPin>,
+    io0: embassy_py32::Peri<'static, impl esmc::Io0Pin>,
+    io1: embassy_py32::Peri<'static, impl esmc::Io1Pin>,
+    io2: embassy_py32::Peri<'static, impl esmc::Io2Pin>,
+    io3: embassy_py32::Peri<'static, impl esmc::Io3Pin>,
+    cs: esmc::ChipSelects<'static>,
+) {
+    let mut config = esmc::Config::default();
+    // HCLK = 168MHz 时请求 2MHz → BAUD = 84（DS 表 5-58 允许 85MHz）。
+    // 想跑快些：0x03 普通读上限约 50MHz，Quad 读可到 85MHz（本芯片实测 ID 读得通即可）；
+    // 实际值用 `qspi.frequency()` 读回（PY32Studio 的默认档是 HCLK/2）。
+    config.sclk = Hertz(2_000_000);
+
+    let mut qspi = match esmc::Esmc::new_blocking_with_cs(peri, clk, io0, io1, io2, io3, cs, config)
+    {
+        Ok(v) => v,
+        Err(e) => {
+            defmt::error!("ESMC init failed: {}", defmt::Display2Format(&e));
+            return;
+        }
+    };
+    defmt::info!(
+        "ESMC ready: SCLK = {} Hz, flash = {} MiB (24-bit addr)",
+        qspi.frequency().0,
+        FLASH_SIZE / 1024 / 1024
+    );
+
+    // 1) JEDEC ID（0x9F）：单线指令、无地址、读 3 字节。
+    //    本板实测 [0xC8, 0x60, 0x18] → GigaDevice / LQ 系列 / 128Mbit。
+    let read_id = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: CMD_READ_ID,
+        data_mode: esmc::DataMode::Read,
+        nb_data: 3,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    let mut id = [0u8; 3];
+    match qspi.command_read(&read_id, &mut id) {
+        Ok(()) => defmt::info!("ESMC JEDEC ID = {=[u8]:#x}", id),
+        Err(e) => defmt::error!("ESMC read id failed: {}", defmt::Display2Format(&e)),
+    }
+
+    // 2) 状态寄存器 1（0x05）：bit0 = BUSY、bit1 = WEL。
+    match read_status_reg(&mut qspi, CMD_READ_STATUS1) {
+        Ok(s) => defmt::info!("ESMC SR1 = {=u8:#x}", s),
+        Err(e) => defmt::error!("ESMC read SR1 failed: {}", defmt::Display2Format(&e)),
+    }
+
+    // 3) 打开 QE 位（4 线读的前提），顺带把**写入通路**验证清楚。
+    //
+    //    诊断链（关键在 WEL 的变化，它是判断"命令到底有没有到 Flash"的唯一抓手）：
+    //      a. WREN(0x06) 后立刻读 SR1 —— WEL 置位说明"只有指令、无数据"的 SFCR 通路 OK；
+    //      b. 写 SR2 之后 WEL 被硬件自动清零 —— 说明 Flash 确实执行完了一条写状态寄存器命令
+    //         （即带数据阶段的间接写通路 OK）；
+    //      c. 最后回读 SR2 看 QE 有没有真的落下去。
+    //    第 1 版就是只看了 c，QE 没置上时无法区分是"写也没发出去"还是"Flash 拒绝接受"。
+    //
+    //    注意这一步是**写 Flash 的非易失状态位**（与官方例程一致）；只想读 ID 的话整段可删。
+    match read_status_reg(&mut qspi, CMD_READ_STATUS2) {
+        Ok(sr2) if sr2 & SR2_QE != 0 => defmt::info!("ESMC SR2 = {=u8:#x} (QE 已置位)", sr2),
+        Ok(sr2) => {
+            defmt::info!("ESMC SR2 = {=u8:#x}, 尝试置 QE…", sr2);
+            // 回写 SR1 时要把 WEL 位掩掉：它是硬件锁存位，不该由软件写。
+            let sr1v = read_status_reg(&mut qspi, CMD_READ_STATUS1).unwrap_or(0) & !SR1_WEL;
+            // (a) 写使能 + 查 WEL
+            let mut wel_ok = false;
+            match send_cmd(&mut qspi, CMD_WRITE_ENABLE)
+                .and_then(|()| read_status_reg(&mut qspi, CMD_READ_STATUS1))
+            {
+                Ok(sr1) => {
+                    wel_ok = sr1 & SR1_WEL != 0;
+                    defmt::info!("ESMC WREN 后 SR1 = {=u8:#x} → WEL={}", sr1, wel_ok);
+                }
+                Err(e) => defmt::error!("ESMC WREN 失败: {}", defmt::Display2Format(&e)),
+            }
+            if !wel_ok {
+                defmt::warn!("ESMC: WEL 没置上，后续写状态寄存器会被 Flash 忽略");
+            }
+
+            // (b)(c) 用 `0x01` 一次发满 2 字节（SR1 + SR2）。
+            // **别用 `0x31`**：本片指令表里没有这条，实测发出去毫无反应（WEL 不消失、
+            // SR2 不变）；**也别只发 1 字节**：手册 7.4 明确说那样会把 QE 清掉。
+            // 详见文件顶部命令码旁的说明。
+            let r = send_cmd(&mut qspi, CMD_WRITE_ENABLE)
+                .and_then(|()| {
+                    write_status_reg(&mut qspi, CMD_WRITE_STATUS1, &[sr1v, sr2 | SR2_QE])
+                })
+                .and_then(|()| wait_not_busy(&mut qspi))
+                .and_then(|()| read_status_reg(&mut qspi, CMD_READ_STATUS1))
+                .and_then(|sr1| {
+                    defmt::info!(
+                        "ESMC 0x01(2B) 后 SR1 = {=u8:#x} → WEL 已清={}",
+                        sr1,
+                        sr1 & SR1_WEL == 0
+                    );
+                    read_status_reg(&mut qspi, CMD_READ_STATUS2)
+                });
+            match r {
+                Ok(v) => defmt::info!(
+                    "ESMC 0x01(2B) 后 SR2 = {=u8:#x} (QE 已置={})",
+                    v,
+                    v & SR2_QE != 0
+                ),
+                Err(e) => defmt::error!(
+                    "ESMC 写状态寄存器失败: {}",
+                    defmt::Display2Format(&e)
+                ),
+            }
+        }
+        Err(e) => defmt::error!("ESMC read SR2 failed: {}", defmt::Display2Format(&e)),
+    }
+    let quad_ready = matches!(read_status_reg(&mut qspi, CMD_READ_STATUS2), Ok(v) if v & SR2_QE != 0);
+    defmt::info!("ESMC QE 是否就绪 = {}", quad_ready);
+
+    // 4) 首 16 字节（0x03）：本片实测为空（全 0xFF）。
+    let mut head = [0u8; 16];
+    match flash_read(&mut qspi, 0, &mut head) {
+        Ok(()) => defmt::info!("ESMC flash[0..16] = {=[u8]:#x}", head),
+        Err(e) => defmt::error!("ESMC read flash failed: {}", defmt::Display2Format(&e)),
+    }
+
+    // 5) **擦写自检** —— 验证"写通路 + 4 线读"的唯一可靠手段。
+    //
+    //    空的 Flash 本来就全读成 0xFF，所以**即使 QE 没置、Dummy 数错、数据线全断，
+    //    "空片读出 0xFF" 也照样成立**——前几轮 demo 看到的 0xFFFFFFFF 其实什么都没证明。
+    //    必须先在草稿扇区写进非 0xFF 的图案，再比对读回值，才能把"链路正确"和
+    //    "恰好都是空的"区分开。
+    //
+    //    两种长度都测：1 字节（最短的 TX 数据阶段）与 13 字节（"整字 + 1 字节尾"的
+    //    混合情形——RM 30.4.14 要求 TX FIFO 数据字对齐、且明确"不支持字和字节交叉
+    //    写入"，正好压这条边界）。
+    //
+    //    ⚠️ 会真的擦写外部 Flash（非易失）。不想要就删掉本段与 `SCRATCH_ADDR`。
+    const PAT1: u8 = 0xA5;
+    const PAT2_OFF: u32 = 0x10;
+    let mut pat2 = [0u8; 13];
+    for (i, b) in pat2.iter_mut().enumerate() {
+        *b = i as u8;
+    }
+
+    // 先看 SR1 的块保护位：被保护区块的擦/写会静默失效（读仍正常）。
+    if let Ok(sr1) = read_status_reg(&mut qspi, CMD_READ_STATUS1) {
+        if sr1 & SR1_BP_MASK != 0 {
+            defmt::warn!(
+                "ESMC SR1 = {=u8:#x} 有块保护位（BP）置位，草稿扇区可能擦/写不动",
+                sr1
+            );
+        }
+    }
+
+    // (a) 草稿扇区得是空的：NOR 编程只能把 1 变 0，旧数据会"与"进来。
+    let mut pre = [0u8; 16];
+    match flash_read(&mut qspi, SCRATCH_ADDR, &mut pre) {
+        Ok(()) if pre.iter().all(|b| *b == 0xFF) => defmt::info!(
+            "ESMC 草稿扇区 {=u32:#x} 已擦除（全 0xFF）",
+            SCRATCH_ADDR
+        ),
+        Ok(()) => defmt::warn!(
+            "ESMC 草稿扇区 {=u32:#x} 非空，编程结果会按位与到旧值上: {=[u8]:#x}",
+            SCRATCH_ADDR,
+            pre
+        ),
+        Err(e) => defmt::error!("ESMC 读草稿扇区失败: {}", defmt::Display2Format(&e)),
+    }
+
+    // (b) 擦 4KB 扇区 → (c) 写 1 字节与 13 字节两段 → (d) 读回比对。
+    match flash_erase_sector(&mut qspi, SCRATCH_ADDR)
+        .and_then(|()| flash_program(&mut qspi, SCRATCH_ADDR, &[PAT1]))
+        .and_then(|()| flash_program(&mut qspi, SCRATCH_ADDR + PAT2_OFF, &pat2))
+    {
+        Ok(()) => {
+            let mut rb1 = [0u8; 1];
+            let mut rb2 = [0u8; 13];
+            let read1 = flash_read(&mut qspi, SCRATCH_ADDR, &mut rb1);
+            let read2 = flash_read(&mut qspi, SCRATCH_ADDR + PAT2_OFF, &mut rb2);
+            match read1 {
+                Ok(()) if rb1 == [PAT1] => defmt::info!("ESMC 擦写自检 1B: {=[u8]:#x} → OK", rb1),
+                Ok(()) => defmt::error!(
+                    "ESMC 擦写自检 1B: 写 {=[u8]:#x} 读回 {=[u8]:#x} → MISMATCH",
+                    [PAT1],
+                    rb1
+                ),
+                Err(e) => defmt::error!("ESMC 擦写自检 1B 读回失败: {}", defmt::Display2Format(&e)),
+            }
+            match read2 {
+                Ok(()) if rb2 == pat2 => defmt::info!("ESMC 擦写自检 13B: {=[u8]:#x} → OK", rb2),
+                Ok(()) => defmt::error!(
+                    "ESMC 擦写自检 13B: 写 {=[u8]:#x} 读回 {=[u8]:#x} → MISMATCH",
+                    pat2,
+                    rb2
+                ),
+                Err(e) => defmt::error!(
+                    "ESMC 擦写自检 13B 读回失败: {}",
+                    defmt::Display2Format(&e)
+                ),
+            }
+        }
+        Err(e) => defmt::error!("ESMC 擦写自检失败: {}", defmt::Display2Format(&e)),
+    }
+
+    // (e) XIP 读：单线（0x03）与 4 线（0x6B）读**同一个已编程地址**再比对期望值。
+    //     外部 Flash 映射到 **0x9000_0000**（RM 表 3-1「ESMC Bank1」），XIP 命令不带
+    //     nb_data（数据量由 AHB 访问决定）。这一组对比是"4 线到底通不通"的判据。
+    let xip_single = esmc::Command {
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: CMD_NORMAL_READ,
+        address_mode: esmc::AddressMode::SingleLine,
+        address_size: esmc::AddressSize::Bits24,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    // 厂商 XIP 例程用的就是这套：0x6B(1-1-4) + 单线地址 + 无备用字节 + 8 Dummy。
+    let xip_quad = esmc::Command {
+        transfer_format: esmc::TransferFormat::Quad,
+        instruction_mode: esmc::InstructionMode::SingleLine,
+        instruction: CMD_FAST_READ_4O,
+        address_mode: esmc::AddressMode::SingleLine,
+        address_size: esmc::AddressSize::Bits24,
+        dummy_cycles: DUMMY_READ_4O,
+        chip_select: esmc::ChipSelect::Cs0,
+        ..Default::default()
+    };
+    // pat2 以 00 01 02 03 开头，按小端读出的首字就是 0x0302_0100。
+    let off2 = (SCRATCH_ADDR + PAT2_OFF) as usize;
+    let expect2: u32 = 0x0302_0100;
+    let s = xip_peek(&mut qspi, &xip_single, "0x03 单线", off2);
+    let q = if quad_ready {
+        xip_peek(&mut qspi, &xip_quad, "0x6B 4线", off2)
+    } else {
+        defmt::warn!("ESMC: QE 未就绪，跳过 0x6B 4线 XIP");
+        None
+    };
+    let verdict = |v: Option<u32>| match v {
+        Some(x) if x == expect2 => "OK",
+        Some(_) => "MISMATCH",
+        None => "FAIL",
+    };
+    defmt::info!(
+        "ESMC XIP 自检 @{=usize:#x}: 期望 {=u32:#x} → 单线 {} / 4线 {}",
+        off2,
+        expect2,
+        verdict(s),
+        verdict(q)
+    );
+}
 
 /// LCD 每秒轮换的填充色，用来直观验证屏幕确实在刷新（而不只是上电花屏）。
 const LCD_CYCLE: [RGB565; 5] = [
@@ -160,6 +777,23 @@ fn main() -> ! {
         boot_clocks.apb2.0
     );
     let p = embassy_py32::Peripherals::take();
+
+    cordic_demo(p.CORDIC);
+
+    // EXTI：PD10 上升沿输入（引脚与触发沿来自 PY32Studio 生成工程的 GPIO_MODE_IT_RISING）
+    exti_demo(p.PD10, p.EXTI10);
+
+    // ESMC（QSPI，16MiB NOR Flash）：PB10 = CLK、PE12~PE15 = BK1_IO0~IO3、PE11 = CS0。
+    // 这组接线与 PY32Studio 生成工程的 `HAL_ESMC_MspInit` 一致，也与本 demo 其它外设不冲突。
+    esmc_demo(
+        p.ESMC,
+        p.PB10,
+        p.PE12,
+        p.PE13,
+        p.PE14,
+        p.PE15,
+        esmc::ChipSelects::none().cs0(p.PE11),
+    );
 
     // GPIO 驱动：PB1 / PB2 两路输出，初电平都是低
     // （驱动内部自动使能 GPIOB 时钟并等待生效）
@@ -318,25 +952,40 @@ fn main() -> ! {
     pwm.set_duty_cycle_percent(Channel::Ch4, 50).unwrap();
     defmt::info!("TIM1_CH4 PWM {} Hz", pwm.frequency().0);
 
-    // TIM2 正交编码器接口（QEI）：PA0 = TI1（CH1）、PA1 = TI2（CH2），AF1。
-    // 默认模式 3（x4）、上升沿、不滤波。编码器 A/B 接 PA0/PA1 后转动即改变 count()。
-    // 未接编码器时读数保持 0，属正常。这里读一次位置与方向并记录。
-    let mut qei = embassy_py32::timer::qei::Qei::new(
+    // ---- 三路正交编码器接口（QEI）----
+    // 编码器 A/B 相即该定时器的 CH1/CH2 引脚（编码器模式下作 TI1/TI2 输入），
+    // 引脚与 AF 号取自 DS V0.13 端口复用表，均复用 pwm 的通道引脚表：
+    //   TIM2：PD3 = CH1（AF2）、PD4 = CH2（AF2）
+    //   TIM3：PE2 = CH1（AF2）、PE3 = CH2（AF2）
+    //   TIM4：PD12 = CH1（AF2）、PD13 = CH2（AF2）
+    // 三路都用默认配置：模式 3（x4）、上升沿、不滤波、ARR = 0xFFFF。
+    // 未接编码器时 CNT 保持 0，属正常。
+    let mut qei2 = embassy_py32::timer::qei::Qei::new(
         p.TIM2,
         p.PD3,
         p.PD4,
         embassy_py32::timer::qei::Config::default(),
     )
     .unwrap();
-    let qei_up = matches!(
-        qei.read_direction(),
-        embassy_py32::timer::qei::Direction::Up
-    );
+    let mut qei3 = embassy_py32::timer::qei::Qei::new(
+        p.TIM3,
+        p.PE2,
+        p.PE3,
+        embassy_py32::timer::qei::Config::default(),
+    )
+    .unwrap();
+    let mut qei4 = embassy_py32::timer::qei::Qei::new(
+        p.TIM4,
+        p.PD12,
+        p.PD13,
+        embassy_py32::timer::qei::Config::default(),
+    )
+    .unwrap();
     defmt::info!(
-        "TIM2 QEI count={} max={} up={}",
-        qei.count(),
-        qei.max_count(),
-        qei_up
+        "QEI ready: TIM2(PD3/PD4) max={} TIM3(PE2/PE3) max={} TIM4(PD12/PD13) max={}",
+        qei2.max_count(),
+        qei3.max_count(),
+        qei4.max_count()
     );
 
     // I2C3 主机：PC8 = SCL、PC9 = SDA（AF8），与官方例程
@@ -373,7 +1022,7 @@ fn main() -> ! {
         // 等待 TIM6 的一次更新事件（1 Hz）。单次 wait_for_update 的轮询上限
         // 约 0.3~0.4 s，小于 1 s 的更新周期，超时返回 Err(Timeout) 属预期，循环重试。
         while tim6.wait_for_update().is_err() {}
-        defmt::info!("Ciallo (TIM6 1Hz tick)");
+        // defmt::info!("Ciallo (TIM6 1Hz tick)");
 
         // LCD：每秒整屏换一种颜色并重绘标题，直观验证屏幕"亮着且在刷新"
         let bg = LCD_CYCLE[lcd_cycle];
@@ -381,17 +1030,34 @@ fn main() -> ! {
         display.fill_screen(bg);
         display.draw_string(4, 4, "PY32E407", FONT_7X10, RGB565::White, bg);
         display.draw_string(4, 18, "ST7735 SPI3 OK", FONT_7X10, RGB565::Yellow, bg);
+        // defmt::info!(
+        //     "TIM7 IRQ ticks={}",
+        //     TIM7_TICKS.load(core::sync::atomic::Ordering::Relaxed)
+        // );
+        // 三个编码器在刚过去的 1s 内的增量：本拍读到的 CNT 就是自上一拍清零以来的
+        // 计数，读完立即 reset()，于是下一拍读到的又是新一段增量。
+        // `as i16` 把 16 位回绕 / 反向计数还原为带符号值（反转时 CNT 会接近 0xFFFF）。
         defmt::info!(
-            "TIM7 IRQ ticks={}",
-            TIM7_TICKS.load(core::sync::atomic::Ordering::Relaxed)
+            "QEI inc 1s: TIM2={} up={} | TIM3={} up={} | TIM4={} up={}",
+            { u32::MAX - qei2.count() + 1 } as i16,
+            matches!(
+                qei2.read_direction(),
+                embassy_py32::timer::qei::Direction::Up
+            ),
+            qei3.count() as i16,
+            matches!(
+                qei3.read_direction(),
+                embassy_py32::timer::qei::Direction::Up
+            ),
+            qei4.count() as i16,
+            matches!(
+                qei4.read_direction(),
+                embassy_py32::timer::qei::Direction::Up
+            )
         );
-        defmt::info!(
-            "TIM2 QEI count={} max={} up={}",
-            qei.count() as i16,
-            qei.max_count(),
-            qei_up
-        );
-        qei.reset();
+        qei2.reset();
+        qei3.reset();
+        qei4.reset();
     }
 }
 

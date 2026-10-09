@@ -1,0 +1,1194 @@
+{
+  "appVersion": "1.0.5",
+  "gitHash": "1469ad5ca7441094d097383c2b20b82833ece63d",
+  "createTime": 1788145045231,
+  "lastTime": 1788145045231,
+  "version": 6,
+  "name": "demo",
+  "platform": "MDK-ARM",
+  "vendor": "Puya",
+  "serial": "PY32E407",
+  "series": "PY32E407",
+  "chip": "PY32E407V1ET7",
+  "firmversion": "V0.7.0",
+  "frameWork": "cortex-m4",
+  "minstack": "0x200",
+  "minheap": "0x100",
+  "ramSize": "0x24000",
+  "flashSize": "0x80000",
+  "default_firmware_location": true,
+  "custom_firmware_location": "",
+  "library_copy": "all",
+  "data": {
+    "lastTime": 1789478470019,
+    "version": 6,
+    "gpioBindings": {
+      "version": 1,
+      "rows": [
+        {
+          "pinName": "PA13",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SWDIO_JTMS"
+          ],
+          "primarySignal": "SWDIO_JTMS"
+        },
+        {
+          "pinName": "PA14",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SWCLK_JTCK"
+          ],
+          "primarySignal": "SWCLK_JTCK"
+        },
+        {
+          "pinName": "PA7",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI1_MOSI"
+          ],
+          "primarySignal": "SPI1_MOSI"
+        },
+        {
+          "pinName": "PA6",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI1_MISO"
+          ],
+          "primarySignal": "SPI1_MISO"
+        },
+        {
+          "pinName": "PA5",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI1_SCK"
+          ],
+          "primarySignal": "SPI1_SCK"
+        },
+        {
+          "pinName": "PA4",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI1_NSS"
+          ],
+          "primarySignal": "SPI1_NSS"
+        },
+        {
+          "pinName": "PB15",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI2_MOSI"
+          ],
+          "primarySignal": "SPI2_MOSI"
+        },
+        {
+          "pinName": "PB14",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI2_MISO"
+          ],
+          "primarySignal": "SPI2_MISO"
+        },
+        {
+          "pinName": "PB13",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI2_SCK"
+          ],
+          "primarySignal": "SPI2_SCK"
+        },
+        {
+          "pinName": "PB12",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI2_NSS"
+          ],
+          "primarySignal": "SPI2_NSS"
+        },
+        {
+          "pinName": "PE13",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "ESMC_BK1_IO1"
+          ],
+          "primarySignal": "ESMC_BK1_IO1"
+        },
+        {
+          "pinName": "PE12",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "ESMC_BK1_IO0"
+          ],
+          "primarySignal": "ESMC_BK1_IO0"
+        },
+        {
+          "pinName": "PE15",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "ESMC_BK1_IO3"
+          ],
+          "primarySignal": "ESMC_BK1_IO3"
+        },
+        {
+          "pinName": "PB10",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "ESMC_CLK"
+          ],
+          "primarySignal": "ESMC_CLK"
+        },
+        {
+          "pinName": "PB3",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI3_SCK"
+          ],
+          "primarySignal": "SPI3_SCK"
+        },
+        {
+          "pinName": "PB4",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI3_MISO"
+          ],
+          "primarySignal": "SPI3_MISO"
+        },
+        {
+          "pinName": "PB5",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "SPI3_MOSI"
+          ],
+          "primarySignal": "SPI3_MOSI"
+        },
+        {
+          "pinName": "PE14",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "ESMC_BK1_IO2"
+          ],
+          "primarySignal": "ESMC_BK1_IO2"
+        },
+        {
+          "pinName": "PA12",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USB1_OTG_FS_DP"
+          ],
+          "primarySignal": "USB1_OTG_FS_DP"
+        },
+        {
+          "pinName": "PA11",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USB1_OTG_FS_DM"
+          ],
+          "primarySignal": "USB1_OTG_FS_DM"
+        },
+        {
+          "pinName": "PB6",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USART1_TX"
+          ],
+          "primarySignal": "USART1_TX"
+        },
+        {
+          "pinName": "PB7",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USART1_RX"
+          ],
+          "primarySignal": "USART1_RX"
+        },
+        {
+          "pinName": "PD5",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USART2_TX"
+          ],
+          "primarySignal": "USART2_TX"
+        },
+        {
+          "pinName": "PD6",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USART2_RX"
+          ],
+          "primarySignal": "USART2_RX"
+        },
+        {
+          "pinName": "PC0",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "LPUART_RX"
+          ],
+          "primarySignal": "LPUART_RX"
+        },
+        {
+          "pinName": "PC1",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "LPUART_TX"
+          ],
+          "primarySignal": "LPUART_TX"
+        },
+        {
+          "pinName": "PA9",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "I2C2_SCL"
+          ],
+          "primarySignal": "I2C2_SCL"
+        },
+        {
+          "pinName": "PA8",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "I2C2_SDA"
+          ],
+          "primarySignal": "I2C2_SDA"
+        },
+        {
+          "pinName": "PE1",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "FDCAN1_TX"
+          ],
+          "primarySignal": "FDCAN1_TX"
+        },
+        {
+          "pinName": "PE0",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "FDCAN1_RX"
+          ],
+          "primarySignal": "FDCAN1_RX"
+        },
+        {
+          "pinName": "PD8",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USART3_TX"
+          ],
+          "primarySignal": "USART3_TX"
+        },
+        {
+          "pinName": "PD9",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "USART3_RX"
+          ],
+          "primarySignal": "USART3_RX"
+        },
+        {
+          "pinName": "PB9",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "I2C1_SDA"
+          ],
+          "primarySignal": "I2C1_SDA"
+        },
+        {
+          "pinName": "PD3",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM2_CH1"
+          ],
+          "primarySignal": "TIM2_CH1"
+        },
+        {
+          "pinName": "PD4",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM2_CH2"
+          ],
+          "primarySignal": "TIM2_CH2"
+        },
+        {
+          "pinName": "PE9",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM5_CH4"
+          ],
+          "primarySignal": "TIM5_CH4"
+        },
+        {
+          "pinName": "PE8",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM5_CH3"
+          ],
+          "primarySignal": "TIM5_CH3"
+        },
+        {
+          "pinName": "PE7",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM18_CH3"
+          ],
+          "primarySignal": "TIM18_CH3"
+        },
+        {
+          "pinName": "PE10",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM18_CH4"
+          ],
+          "primarySignal": "TIM18_CH4"
+        },
+        {
+          "pinName": "PC2",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM1_CH3"
+          ],
+          "primarySignal": "TIM1_CH3"
+        },
+        {
+          "pinName": "PC3",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM1_CH4"
+          ],
+          "primarySignal": "TIM1_CH4"
+        },
+        {
+          "pinName": "PE4",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM9_CH1"
+          ],
+          "primarySignal": "TIM9_CH1"
+        },
+        {
+          "pinName": "PE5",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM9_CH2"
+          ],
+          "primarySignal": "TIM9_CH2"
+        },
+        {
+          "pinName": "PD13",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM4_CH2"
+          ],
+          "primarySignal": "TIM4_CH2"
+        },
+        {
+          "pinName": "PD12",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM4_CH1"
+          ],
+          "primarySignal": "TIM4_CH1"
+        },
+        {
+          "pinName": "PE2",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM3_CH1"
+          ],
+          "primarySignal": "TIM3_CH1"
+        },
+        {
+          "pinName": "PE3",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM3_CH2"
+          ],
+          "primarySignal": "TIM3_CH2"
+        },
+        {
+          "pinName": "PA1",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "UART3_RX"
+          ],
+          "primarySignal": "UART3_RX"
+        },
+        {
+          "pinName": "PA2",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "UART3_TX"
+          ],
+          "primarySignal": "UART3_TX"
+        },
+        {
+          "pinName": "PC4",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "GPIO_Output"
+          ],
+          "primarySignal": "GPIO_Output"
+        },
+        {
+          "pinName": "PC5",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "GPIO_Output"
+          ],
+          "primarySignal": "GPIO_Output"
+        },
+        {
+          "pinName": "PC13",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "GPIO_Output"
+          ],
+          "primarySignal": "GPIO_Output"
+        },
+        {
+          "pinName": "PC14",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "GPIO_Input"
+          ],
+          "primarySignal": "GPIO_Input"
+        },
+        {
+          "pinName": "PC15",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "GPIO_Input"
+          ],
+          "primarySignal": "GPIO_Input"
+        },
+        {
+          "pinName": "PA15",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "I2C1_SCL"
+          ],
+          "primarySignal": "I2C1_SCL"
+        },
+        {
+          "pinName": "PB8",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "BOOT0"
+          ],
+          "primarySignal": "BOOT0"
+        },
+        {
+          "pinName": "PE11",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "ESMC_CS0_NCS"
+          ],
+          "primarySignal": "ESMC_CS0_NCS"
+        },
+        {
+          "pinName": "PD10",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "GPIO_EXTI10"
+          ],
+          "primarySignal": "GPIO_EXTI10"
+        },
+        {
+          "pinName": "PF4",
+          "locked": true,
+          "source": "manual",
+          "alternates": [
+            "TIM15_CH2"
+          ],
+          "primarySignal": "TIM15_CH2"
+        },
+        {
+          "pinName": "PF0",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "RCC_OSC_IN"
+          ],
+          "primarySignal": "RCC_OSC_IN"
+        },
+        {
+          "pinName": "PF1",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "RCC_OSC_OUT"
+          ],
+          "primarySignal": "RCC_OSC_OUT"
+        },
+        {
+          "pinName": "PC6",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "I2C4_SCL"
+          ],
+          "primarySignal": "I2C4_SCL"
+        },
+        {
+          "pinName": "PC7",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "I2C4_SDA"
+          ],
+          "primarySignal": "I2C4_SDA"
+        },
+        {
+          "pinName": "PC10",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "UART1_TX"
+          ],
+          "primarySignal": "UART1_TX"
+        },
+        {
+          "pinName": "PC11",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "UART1_RX"
+          ],
+          "primarySignal": "UART1_RX"
+        },
+        {
+          "pinName": "PC8",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "I2C3_SCL"
+          ],
+          "primarySignal": "I2C3_SCL"
+        },
+        {
+          "pinName": "PC9",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "I2C3_SDA"
+          ],
+          "primarySignal": "I2C3_SDA"
+        },
+        {
+          "pinName": "PC12",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "UART2_TX"
+          ],
+          "primarySignal": "UART2_TX"
+        },
+        {
+          "pinName": "PD2",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "UART2_RX"
+          ],
+          "primarySignal": "UART2_RX"
+        },
+        {
+          "pinName": "PF3",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "TIM15_CH1"
+          ],
+          "primarySignal": "TIM15_CH1"
+        },
+        {
+          "pinName": "PA0",
+          "locked": false,
+          "source": "auto",
+          "alternates": [
+            "TIM5_CH1"
+          ],
+          "primarySignal": "TIM5_CH1"
+        }
+      ]
+    },
+    "value": {
+      "RCC.MODE.HSE.value": {
+        "type": "global-value",
+        "order": 1,
+        "value": "ON"
+      },
+      "PA13;SWDIO_JTMS": {
+        "type": "pins-af",
+        "order": 2
+      },
+      "PA14;SWCLK_JTCK": {
+        "type": "pins-af",
+        "order": 3
+      },
+      "SPI1.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 21,
+        "value": "MASTER:2LINES"
+      },
+      "SPI1.MODE.NSSMode.value": {
+        "type": "global-value",
+        "order": 22,
+        "value": "HardOutput"
+      },
+      "PA7;SPI1_MOSI": {
+        "type": "pins-af",
+        "order": 16
+      },
+      "PA6;SPI1_MISO": {
+        "type": "pins-af",
+        "order": 17
+      },
+      "PA5;SPI1_SCK": {
+        "type": "pins-af",
+        "order": 19
+      },
+      "PA4;SPI1_NSS": {
+        "type": "pins-af",
+        "order": 20
+      },
+      "PB15;SPI2_MOSI": {
+        "type": "pins-af",
+        "order": 23
+      },
+      "PB14;SPI2_MISO": {
+        "type": "pins-af",
+        "order": 24
+      },
+      "PB13;SPI2_SCK": {
+        "type": "pins-af",
+        "order": 26
+      },
+      "PB12;SPI2_NSS": {
+        "type": "pins-af",
+        "order": 27
+      },
+      "SPI2.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 28,
+        "value": "MASTER:2LINES"
+      },
+      "SPI2.MODE.NSSMode.value": {
+        "type": "global-value",
+        "order": 29,
+        "value": "HardOutput"
+      },
+      "ESMC.MODE.TransferFormat.value": {
+        "type": "global-value",
+        "order": 50,
+        "value": "TRANSFER_FORMAT_QUAD"
+      },
+      "USART1.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 67,
+        "value": "Asynchronous"
+      },
+      "PE13;ESMC_BK1_IO1": {
+        "type": "pins-af",
+        "order": 36
+      },
+      "PE12;ESMC_BK1_IO0": {
+        "type": "pins-af",
+        "order": 37
+      },
+      "PE15;ESMC_BK1_IO3": {
+        "type": "pins-af",
+        "order": 38
+      },
+      "PB10;ESMC_CLK": {
+        "type": "pins-af",
+        "order": 40
+      },
+      "USART2.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 41,
+        "value": "Asynchronous"
+      },
+      "USART3.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 72,
+        "value": "Asynchronous"
+      },
+      "PB3;SPI3_SCK": {
+        "type": "pins-af",
+        "order": 44
+      },
+      "PB4;SPI3_MISO": {
+        "type": "pins-af",
+        "order": 45
+      },
+      "PB5;SPI3_MOSI": {
+        "type": "pins-af",
+        "order": 46
+      },
+      "SPI3.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 47,
+        "value": "MASTER:2LINES"
+      },
+      "PE14;ESMC_BK1_IO2": {
+        "type": "pins-af",
+        "order": 49
+      },
+      "PC0;LPUART_RX": {
+        "type": "pins-af",
+        "order": 76
+      },
+      "PC1;LPUART_TX": {
+        "type": "pins-af",
+        "order": 77
+      },
+      "LPUART.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 78,
+        "value": "Asynchronous"
+      },
+      "PA12;USB1_OTG_FS_DP": {
+        "type": "pins-af",
+        "order": 61
+      },
+      "PA11;USB1_OTG_FS_DM": {
+        "type": "pins-af",
+        "order": 62
+      },
+      "USB1_OTG_FS.MODE.USBMode.value": {
+        "type": "global-value",
+        "order": 63,
+        "value": "Device_Only"
+      },
+      "PB6;USART1_TX": {
+        "type": "pins-af",
+        "order": 68
+      },
+      "PB7;USART1_RX": {
+        "type": "pins-af",
+        "order": 69
+      },
+      "PD5;USART2_TX": {
+        "type": "pins-af",
+        "order": 73
+      },
+      "PD6;USART2_RX": {
+        "type": "pins-af",
+        "order": 74
+      },
+      "UART3.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 195,
+        "value": true
+      },
+      "PA9;I2C2_SCL": {
+        "type": "pins-af",
+        "order": 79
+      },
+      "PA8;I2C2_SDA": {
+        "type": "pins-af",
+        "order": 80
+      },
+      "I2C2.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 81,
+        "value": "I2C"
+      },
+      "I2C2.Parameter.I2CSpeedMode.value": {
+        "type": "global-value",
+        "order": 87,
+        "value": "FastMode"
+      },
+      "I2C4.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 88,
+        "value": "I2C"
+      },
+      "I2C4.Parameter.I2CSpeedMode.value": {
+        "type": "global-value",
+        "order": 89,
+        "value": "FastMode"
+      },
+      "FDCAN1.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 96,
+        "value": true
+      },
+      "PE1;FDCAN1_TX": {
+        "type": "pins-af",
+        "order": 94
+      },
+      "PE0;FDCAN1_RX": {
+        "type": "pins-af",
+        "order": 95
+      },
+      "PD8;USART3_TX": {
+        "type": "pins-af",
+        "order": 97
+      },
+      "PD9;USART3_RX": {
+        "type": "pins-af",
+        "order": 98
+      },
+      "PB9;I2C1_SDA": {
+        "type": "pins-af",
+        "order": 99
+      },
+      "I2C1.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 101,
+        "value": "I2C"
+      },
+      "UART1.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 106,
+        "value": true
+      },
+      "UART2.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 119,
+        "value": true
+      },
+      "I2C3.MODE.Mode.value": {
+        "type": "global-value",
+        "order": 108,
+        "value": "I2C"
+      },
+      "TIM2.MODE.CombinedChannels.value": {
+        "type": "global-value",
+        "order": 117,
+        "value": "encoder"
+      },
+      "TIM3.MODE.CombinedChannels.value": {
+        "type": "global-value",
+        "order": 189,
+        "value": "encoder"
+      },
+      "TIM4.MODE.CombinedChannels.value": {
+        "type": "global-value",
+        "order": 185,
+        "value": "encoder"
+      },
+      "PD3;TIM2_CH1": {
+        "type": "pins-af",
+        "order": 115
+      },
+      "PD4;TIM2_CH2": {
+        "type": "pins-af",
+        "order": 116
+      },
+      "TIM1.MODE.Channel3.value": {
+        "type": "global-value",
+        "order": 167,
+        "value": "pwm_ch"
+      },
+      "TIM1.MODE.Channel4.value": {
+        "type": "global-value",
+        "order": 168,
+        "value": "pwm_ch"
+      },
+      "TIM18.MODE.Channel4.value": {
+        "type": "global-value",
+        "order": 156,
+        "value": "pwm_ch"
+      },
+      "PE9;TIM5_CH4": {
+        "type": "pins-af",
+        "order": 138
+      },
+      "PE8;TIM5_CH3": {
+        "type": "pins-af",
+        "order": 139
+      },
+      "PE7;TIM18_CH3": {
+        "type": "pins-af",
+        "order": 142
+      },
+      "PE10;TIM18_CH4": {
+        "type": "pins-af",
+        "order": 143
+      },
+      "TIM5.MODE.Channel3.value": {
+        "type": "global-value",
+        "order": 152,
+        "value": "pwm_ch"
+      },
+      "TIM5.MODE.Channel4.value": {
+        "type": "global-value",
+        "order": 153,
+        "value": "oc_ch"
+      },
+      "TIM5.MODE.ClockSource.value": {
+        "type": "global-value",
+        "order": 154,
+        "value": "internal"
+      },
+      "TIM18.MODE.Channel3.value": {
+        "type": "global-value",
+        "order": 155,
+        "value": "pwm_ch"
+      },
+      "TIM18.MODE.ClockSource.value": {
+        "type": "global-value",
+        "order": 157,
+        "value": "internal"
+      },
+      "TIM6.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 164,
+        "value": true
+      },
+      "PC2;TIM1_CH3": {
+        "type": "pins-af",
+        "order": 165
+      },
+      "PC3;TIM1_CH4": {
+        "type": "pins-af",
+        "order": 166
+      },
+      "TIM1.MODE.ClockSource.value": {
+        "type": "global-value",
+        "order": 169,
+        "value": "internal"
+      },
+      "CRC.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 170,
+        "value": true
+      },
+      "CORDIC.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 171,
+        "value": true
+      },
+      "RNG.MODE.Activated.value": {
+        "type": "global-value",
+        "order": 172,
+        "value": true
+      },
+      "TIM9.MODE.ClockSource.value": {
+        "type": "global-value",
+        "order": 175,
+        "value": "internal"
+      },
+      "TIM9.MODE.Channel1.value": {
+        "type": "global-value",
+        "order": 176,
+        "value": "pwm_ch"
+      },
+      "PE4;TIM9_CH1": {
+        "type": "pins-af",
+        "order": 177
+      },
+      "TIM9.MODE.Channel2.value": {
+        "type": "global-value",
+        "order": 181,
+        "value": "pwm_ch"
+      },
+      "PE5;TIM9_CH2": {
+        "type": "pins-af",
+        "order": 180
+      },
+      "PD13;TIM4_CH2": {
+        "type": "pins-af",
+        "order": 183
+      },
+      "PD12;TIM4_CH1": {
+        "type": "pins-af",
+        "order": 184
+      },
+      "PE2;TIM3_CH1": {
+        "type": "pins-af",
+        "order": 187
+      },
+      "PE3;TIM3_CH2": {
+        "type": "pins-af",
+        "order": 188
+      },
+      "PA1;UART3_RX": {
+        "type": "pins-af",
+        "order": 193
+      },
+      "PA2;UART3_TX": {
+        "type": "pins-af",
+        "order": 194
+      },
+      "PC4;GPIO_Output": {
+        "type": "pins-af",
+        "order": 196
+      },
+      "PC5;GPIO_Output": {
+        "type": "pins-af",
+        "order": 197
+      },
+      "PC13;GPIO_Output": {
+        "type": "pins-af",
+        "order": 198
+      },
+      "PC14;GPIO_Input": {
+        "type": "pins-af",
+        "order": 199
+      },
+      "PC15;GPIO_Input": {
+        "type": "pins-af",
+        "order": 200
+      },
+      "HSE_CLK": {
+        "type": "clock-value",
+        "order": 246,
+        "value": "8000000"
+      },
+      "SYS_CLK_SEL": {
+        "type": "clock-value",
+        "order": 232,
+        "value": "PLL"
+      },
+      "APB1_DIV": {
+        "type": "clock-value",
+        "order": 362,
+        "value": "div4"
+      },
+      "PLL_CAN_DIV": {
+        "type": "clock-value",
+        "order": 284,
+        "value": "div8"
+      },
+      "PLL_USB_DIV": {
+        "type": "clock-value",
+        "order": 337,
+        "value": "div35"
+      },
+      "PLL_MUL": {
+        "type": "clock-value",
+        "order": 357,
+        "value": "PLLMUL168"
+      },
+      "APB2_DIV": {
+        "type": "clock-value",
+        "order": 363,
+        "value": "div4"
+      },
+      "PA15;I2C1_SCL": {
+        "type": "pins-af",
+        "order": 289
+      },
+      "PB8;BOOT0": {
+        "type": "pins-af",
+        "order": 290
+      },
+      "PE11;ESMC_CS0_NCS": {
+        "type": "pins-af",
+        "order": 293
+      },
+      "PD10;GPIO_EXTI10": {
+        "type": "pins-af",
+        "order": 294
+      },
+      "TIM8.MODE.ClockSource.value": {
+        "type": "global-value",
+        "order": 295,
+        "value": "internal"
+      },
+      "TIM15.MODE.Channel2.value": {
+        "type": "global-value",
+        "order": 298,
+        "value": "pwm_ch"
+      },
+      "TIM15.MODE.Channel1.value": {
+        "type": "global-value",
+        "order": 299,
+        "value": "pwm_ch"
+      },
+      "PF4;TIM15_CH2": {
+        "type": "pins-af",
+        "order": 300
+      },
+      "TIM15.MODE.ClockSource.value": {
+        "type": "global-value",
+        "order": 301,
+        "value": "internal"
+      },
+      "TIM5.MODE.Channel1.value": {
+        "type": "global-value",
+        "order": 306,
+        "value": "pwm_ch"
+      },
+      "PLL_PRE_DIV": {
+        "type": "clock-value",
+        "order": 354,
+        "value": "div8"
+      },
+      "PLL_CLK_SEL": {
+        "type": "clock-value",
+        "order": 330,
+        "value": "PLLXTPRE"
+      },
+      "CAN_CLK_SEL": {
+        "type": "clock-value",
+        "order": 339,
+        "value": "HSE"
+      },
+      "USB_CLK_SEL": {
+        "type": "clock-value",
+        "order": 365,
+        "value": "HSI48M"
+      }
+    }
+  },
+  "templateVersion": 3
+}

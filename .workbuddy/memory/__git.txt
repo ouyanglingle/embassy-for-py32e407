@@ -1,0 +1,30 @@
+git repo: True
+ M .workbuddy/memory/2026-09-14.md
+ M demo-py32/Cargo.lock
+ M demo-py32/Cargo.toml
+ M demo-py32/src/main.rs
+ M embassy-py32/Cargo.lock
+ M embassy-py32/Cargo.toml
+ M embassy-py32/src/gpio.rs
+ M embassy-py32/src/i2c.rs
+ M embassy-py32/src/lib.rs
+ M embassy-py32/src/peripherals.rs
+ M embassy-py32/src/spi.rs
+ M embassy-py32/src/timer/pwm.rs
+?? .vscode/
+?? .workbuddy/memory/2026-09-16.md
+?? .workbuddy/memory/__chk2.txt
+?? demo-py32/build_check.log
+?? demo-py32/build_check.txt
+?? demo-py32/src/motor.rs
+?? demo-py32/src/pid/
+?? embassy-py32/check_nofeat.txt
+?? embassy-py32/src/cordic.rs
+?? embassy-py32/src/esmc.rs
+?? "\345\217\202\350\200\203\350\256\276\350\256\241/demo/"
+--- log ---
+1340483 feat(spi, rcc, demo): add SPI actual freq query, rewrite RCC clock calc, refactor clock config
+ff0341e fix(py32): ???168MHz????????????????????????
+a5cd1ed docs: add stm32f412rgt6-microboard reference design project
+5a3b13a feat: add embassy-py32 driver crate and demo-py32 example project
+7a446d1 docs: add workbuddy logs and qei driver plan

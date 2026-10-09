@@ -162,12 +162,17 @@ pub(crate) mod sealed_pin {
 
 /// 可作为某实例某通道 PWM 输出的引脚。
 #[allow(private_bounds)]
-pub trait ChannelPin<T: PwmInstance, C: TimerChannel>: sealed_pin::SealedChannelPin<T, C> + Pin {}
+pub trait ChannelPin<T: PwmInstance, C: TimerChannel>:
+    sealed_pin::SealedChannelPin<T, C> + Pin
+{
+}
 
 /// 为引脚生成某实例/通道的 [`ChannelPin`] 实现（含 AF 号）。
 macro_rules! impl_channel_pin {
     ($inst:ident, $ch:ident, $pin:ident, $af:literal) => {
-        impl sealed_pin::SealedChannelPin<crate::peripherals::$inst, $ch> for crate::peripherals::$pin {
+        impl sealed_pin::SealedChannelPin<crate::peripherals::$inst, $ch>
+            for crate::peripherals::$pin
+        {
             #[inline]
             fn af_num(&self) -> u8 {
                 $af
@@ -409,10 +414,46 @@ macro_rules! impl_pwm_block_4ch_split_moe {
             #[inline]
             fn configure_channel(&self, ch: usize, active_low: bool) {
                 match ch {
-                    0 => pwm_cfg_one_split!(self, ccmr1_output, cc1s, oc1pe, oc1m_l, oc1m_h, cc1p, active_low),
-                    1 => pwm_cfg_one_split!(self, ccmr1_output, cc2s, oc2pe, oc2m_l, oc2m_h, cc2p, active_low),
-                    2 => pwm_cfg_one_split!(self, ccmr2_output, cc3s, oc3pe, oc3m_l, oc3m_h, cc3p, active_low),
-                    _ => pwm_cfg_one_split!(self, ccmr2_output, cc4s, oc4pe, oc4m_l, oc4m_h, cc4p, active_low),
+                    0 => pwm_cfg_one_split!(
+                        self,
+                        ccmr1_output,
+                        cc1s,
+                        oc1pe,
+                        oc1m_l,
+                        oc1m_h,
+                        cc1p,
+                        active_low
+                    ),
+                    1 => pwm_cfg_one_split!(
+                        self,
+                        ccmr1_output,
+                        cc2s,
+                        oc2pe,
+                        oc2m_l,
+                        oc2m_h,
+                        cc2p,
+                        active_low
+                    ),
+                    2 => pwm_cfg_one_split!(
+                        self,
+                        ccmr2_output,
+                        cc3s,
+                        oc3pe,
+                        oc3m_l,
+                        oc3m_h,
+                        cc3p,
+                        active_low
+                    ),
+                    _ => pwm_cfg_one_split!(
+                        self,
+                        ccmr2_output,
+                        cc4s,
+                        oc4pe,
+                        oc4m_l,
+                        oc4m_h,
+                        cc4p,
+                        active_low
+                    ),
                 }
             }
             #[inline]
@@ -467,10 +508,46 @@ macro_rules! impl_pwm_block_4ch_split {
             #[inline]
             fn configure_channel(&self, ch: usize, active_low: bool) {
                 match ch {
-                    0 => pwm_cfg_one_split!(self, ccmr1_output, cc1s, oc1pe, oc1m_l, oc1m_h, cc1p, active_low),
-                    1 => pwm_cfg_one_split!(self, ccmr1_output, cc2s, oc2pe, oc2m_l, oc2m_h, cc2p, active_low),
-                    2 => pwm_cfg_one_split!(self, ccmr2_output, cc3s, oc3pe, oc3m_l, oc3m_h, cc3p, active_low),
-                    _ => pwm_cfg_one_split!(self, ccmr2_output, cc4s, oc4pe, oc4m_l, oc4m_h, cc4p, active_low),
+                    0 => pwm_cfg_one_split!(
+                        self,
+                        ccmr1_output,
+                        cc1s,
+                        oc1pe,
+                        oc1m_l,
+                        oc1m_h,
+                        cc1p,
+                        active_low
+                    ),
+                    1 => pwm_cfg_one_split!(
+                        self,
+                        ccmr1_output,
+                        cc2s,
+                        oc2pe,
+                        oc2m_l,
+                        oc2m_h,
+                        cc2p,
+                        active_low
+                    ),
+                    2 => pwm_cfg_one_split!(
+                        self,
+                        ccmr2_output,
+                        cc3s,
+                        oc3pe,
+                        oc3m_l,
+                        oc3m_h,
+                        cc3p,
+                        active_low
+                    ),
+                    _ => pwm_cfg_one_split!(
+                        self,
+                        ccmr2_output,
+                        cc4s,
+                        oc4pe,
+                        oc4m_l,
+                        oc4m_h,
+                        cc4p,
+                        active_low
+                    ),
                 }
             }
             #[inline]
@@ -521,8 +598,26 @@ macro_rules! impl_pwm_block_2ch_split {
             #[inline]
             fn configure_channel(&self, ch: usize, active_low: bool) {
                 match ch {
-                    0 => pwm_cfg_one_split!(self, ccmr1_output, cc1s, oc1pe, oc1m_l, oc1m_h, cc1p, active_low),
-                    _ => pwm_cfg_one_split!(self, ccmr1_output, cc2s, oc2pe, oc2m_l, oc2m_h, cc2p, active_low),
+                    0 => pwm_cfg_one_split!(
+                        self,
+                        ccmr1_output,
+                        cc1s,
+                        oc1pe,
+                        oc1m_l,
+                        oc1m_h,
+                        cc1p,
+                        active_low
+                    ),
+                    _ => pwm_cfg_one_split!(
+                        self,
+                        ccmr1_output,
+                        cc2s,
+                        oc2pe,
+                        oc2m_l,
+                        oc2m_h,
+                        cc2p,
+                        active_low
+                    ),
                 }
             }
             #[inline]
@@ -568,7 +663,16 @@ macro_rules! impl_pwm_block_1ch_split {
         impl sealed_block::SealedPwmBlock for crate::pac::$pacmod::RegisterBlock {
             #[inline]
             fn configure_channel(&self, _ch: usize, active_low: bool) {
-                pwm_cfg_one_split!(self, ccmr1_output, cc1s, oc1pe, oc1m_l, oc1m_h, cc1p, active_low)
+                pwm_cfg_one_split!(
+                    self,
+                    ccmr1_output,
+                    cc1s,
+                    oc1pe,
+                    oc1m_l,
+                    oc1m_h,
+                    cc1p,
+                    active_low
+                )
             }
             #[inline]
             fn set_channel_enable(&self, _ch: usize, on: bool) {
@@ -601,8 +705,12 @@ macro_rules! impl_pwm_block_2ch_single {
             #[inline]
             fn configure_channel(&self, ch: usize, active_low: bool) {
                 match ch {
-                    0 => pwm_cfg_one_single!(self, ccmr1_output, cc1s, oc1pe, oc1m, cc1p, active_low),
-                    _ => pwm_cfg_one_single!(self, ccmr1_output, cc2s, oc2pe, oc2m, cc2p, active_low),
+                    0 => {
+                        pwm_cfg_one_single!(self, ccmr1_output, cc1s, oc1pe, oc1m, cc1p, active_low)
+                    }
+                    _ => {
+                        pwm_cfg_one_single!(self, ccmr1_output, cc2s, oc2pe, oc2m, cc2p, active_low)
+                    }
                 }
             }
             #[inline]
@@ -1025,5 +1133,67 @@ fn check_channel<C: TimerChannel>(present: bool, channels: u8) -> Result<(), Err
         Err(Error::InvalidChannel)
     } else {
         Ok(())
+    }
+}
+
+// ---------------------------------------------------------------------------
+// embedded-hal 1.0 兼容实现（由 crate feature `embedded-hal-1` 开启）
+// ---------------------------------------------------------------------------
+//
+// impl 写在类型所属 crate 内部（孤儿规则，理由见 `crate::gpio` 的对应小节）。
+//
+// [`Pwm`] 的模型是"一个定时器实例 + 最多 4 个通道"，而 `embedded-hal` 的
+// `pwm::SetDutyCycle` 是"一个对象 = 一个通道"，两边对不齐，故用 [`PwmChannel`]
+// 这个借用式单通道视图来桥接：第三方驱动拿到 `PwmChannel` 就能直接调占空比。
+// （多通道共用时逐个借用即可，借用期间整个 `Pwm` 被独占。）
+
+/// 单通道占空比视图：把 [`Pwm`] 固定到某一通道，实现 `embedded-hal` 的
+/// `pwm::SetDutyCycle`。
+#[cfg(feature = "embedded-hal-1")]
+pub struct PwmChannel<'a, 'd, T: PwmInstance> {
+    pwm: &'a mut Pwm<'d, T>,
+    channel: Channel,
+}
+
+#[cfg(feature = "embedded-hal-1")]
+impl<'a, 'd, T: PwmInstance> PwmChannel<'a, 'd, T> {
+    /// 把 `pwm` 的 `channel` 通道借出为一个单通道句柄。
+    #[inline]
+    pub fn new(pwm: &'a mut Pwm<'d, T>, channel: Channel) -> Self {
+        Self { pwm, channel }
+    }
+}
+
+#[cfg(feature = "embedded-hal-1")]
+mod embedded_hal_impls {
+    use super::{Error, PwmChannel, PwmInstance};
+    use embedded_hal_1::pwm::{ErrorKind, ErrorType, SetDutyCycle};
+
+    /// `embedded-hal` 的 PWM 错误分类映射。
+    ///
+    /// `pwm::ErrorKind` 只有一个 `Other` 变体，故全部归入它。
+    impl embedded_hal_1::pwm::Error for Error {
+        fn kind(&self) -> ErrorKind {
+            ErrorKind::Other
+        }
+    }
+
+    impl<'a, 'd, T: PwmInstance> ErrorType for PwmChannel<'a, 'd, T> {
+        type Error = Error;
+    }
+
+    impl<'a, 'd, T: PwmInstance> SetDutyCycle for PwmChannel<'a, 'd, T> {
+        /// [`Pwm::max_duty_cycle`] 是 `ARR + 1`（u32）。[`super::super::Config::from_frequency`]
+        /// 保证 `ARR ≤ 0xFFFF`，故只有 `ARR == 0xFFFF` 这一种配置会算出 0x10000，
+        /// 此时钳到 `u16::MAX`——`set_duty` 本就把超出值钳到 `ARR`，满占空比语义不变。
+        #[inline]
+        fn max_duty_cycle(&self) -> u16 {
+            self.pwm.max_duty_cycle().min(u16::MAX as u32) as u16
+        }
+
+        #[inline]
+        fn set_duty_cycle(&mut self, duty: u16) -> Result<(), Self::Error> {
+            self.pwm.set_duty(self.channel, u32::from(duty))
+        }
     }
 }

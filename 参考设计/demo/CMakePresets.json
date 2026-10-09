@@ -1,0 +1,63 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "toolchainFile": "${sourceDir}/cmake/arm-none-eabi-gcc.cmake",
+      "cacheVariables": {
+        "TARGET_MCU": "PY32E407xE",
+        "CPU": "cortex-m4",
+        "FPU": "vfpv4-d16",
+        "FLOAT_ABI": "hard"
+      }
+    },
+    {
+      "name": "Debug",
+      "displayName": "Debug (-Og -g3)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Release",
+      "displayName": "Release (-O2)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "MinSizeRel",
+      "displayName": "MinSizeRel (-Os)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Debug",
+      "displayName": "构建 Debug",
+      "configurePreset": "Debug"
+    },
+    {
+      "name": "Release",
+      "displayName": "构建 Release",
+      "configurePreset": "Release"
+    },
+    {
+      "name": "MinSizeRel",
+      "displayName": "构建 MinSizeRel",
+      "configurePreset": "MinSizeRel"
+    }
+  ]
+}

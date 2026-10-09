@@ -6,3 +6,12 @@ edition = "2024"
 [dependencies]
 # 本地生成的 PAC（svd2rust 0.37）
 py32e407-pac = { path = "../py32e407-pac" }
+# embedded-hal 1.0 兼容实现（可选）。
+# 依赖重命名为 `embedded-hal-1`，与 embassy-stm32 的命名保持一致；
+# 在 Rust 代码里以 `embedded_hal_1::...` 引用。
+embedded-hal-1 = { package = "embedded-hal", version = "1.0", optional = true }
+
+[features]
+# 为 gpio / spi / i2c / pwm 提供 embedded-hal 1.0 的 trait 实现。
+# 不开也能正常使用本 HAL 的原生 API，只是外部驱动无法直接接收这些类型。
+embedded-hal-1 = ["dep:embedded-hal-1"]

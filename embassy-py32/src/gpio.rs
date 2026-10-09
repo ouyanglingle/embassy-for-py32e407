@@ -168,6 +168,20 @@ pub trait Pin: PeripheralType + Into<AnyPin> + SealedPin + Sized + 'static {
     }
 }
 
+/// EXTI 引脚 trait（对齐 embassy-stm32 的 `ExtiPin`）。
+///
+/// 本 trait 只声明"这条引脚归哪条 EXTI 线"，实际的端口选择/触发/屏蔽配置在
+/// [`crate::exti`]；EXTI 不在 [`Input`] 里内建，因为它要占用对应的 EXTI 线
+/// ——线是稀缺资源（`PA5`/`PB5`/`PC5`… 共用 `EXTI5`），必须显式交出一份所有权。
+#[allow(private_bounds)]
+pub trait ExtiPin: PeripheralType + SealedPin {
+    /// 该引脚对应的 EXTI 通道（如 `PC4` → `EXTI4`）。
+    ///
+    /// 由 [`crate::peripherals`] 为每个 `Pxy` 实现；同一线号只能有一个
+    /// [`crate::Peri`] 通道句柄存在，故编译期即可拦住"两个引脚抢一条线"。
+    type ExtiChannel: crate::exti::Channel;
+}
+
 /// 类型擦除的 GPIO 引脚（对齐 embassy-stm32 的 `AnyPin`）。
 pub struct AnyPin {
     /// `pin_port` = 端口号 × 16 + 引脚号。
@@ -446,7 +460,7 @@ impl<'d> Flex<'d> {
 
     /// 取 (端口号, 引脚号)。
     #[inline]
-    fn port_pin(&self) -> (u8, u8) {
+    pub(crate) fn port_pin(&self) -> (u8, u8) {
         (self.pin.pin_port() / 16, self.pin.pin_port() % 16)
     }
 }
@@ -477,6 +491,21 @@ impl<'d> Input<'d> {
     #[inline]
     pub fn into_flex(self) -> Flex<'d> {
         self.flex
+    }
+
+    /// 引脚号（端口内 0..16）。
+    ///
+    /// 只供 crate 内驱动使用：EXTI 驱动要靠它定位线号，而引脚被类型擦除成
+    /// [`AnyPin`] 后，只有 `Peri` 句柄的调用方读不到这个值。
+    #[inline]
+    pub(crate) fn pin(&self) -> u8 {
+        self.flex.port_pin().1
+    }
+
+    /// 端口号（0 = GPIOA … 5 = GPIOF）。见 [`Self::pin`]。
+    #[inline]
+    pub(crate) fn port(&self) -> u8 {
+        self.flex.port_pin().0
     }
 
     /// 读取引脚电平是否为高。
@@ -668,5 +697,184 @@ impl<P: Pin> Degrade for Peri<'_, P> {
     fn degrade(self) -> Peri<'static, AnyPin> {
         // 丢弃原句柄、取 AnyPin 句柄：所有权语义仍由 Peri 类型系统保证（单例只能取出一次）
         unsafe { Peri::new_unchecked(AnyPin { pin_port: self.pin_port() }) }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// embedded-hal 1.0 兼容实现（由 crate feature `embedded-hal-1` 开启）
+// ---------------------------------------------------------------------------
+//
+// 做法对齐 embassy-stm32：trait impl 写在**类型所属的 crate 内部**，而不是让下游
+// 去写 newtype 适配层。原因是孤儿规则——`embedded_hal::digital::OutputPin` 是外部
+// trait，`crate::gpio::Output` 对下游 crate 也是外部类型，下游无法直接 impl。
+// 写在这里之后，`embedded-hal` 生态的第三方驱动就能直接接收本 HAL 的
+// [`Output`] / [`Input`] / [`Flex`] / [`OutputOpenDrain`]，**零包装开销**。
+//
+// GPIO 写电平不会失败，故 `Error` 统一取 [`core::convert::Infallible`]
+// （`embedded-hal` 已为它提供 `digital::Error` 实现）。
+#[cfg(feature = "embedded-hal-1")]
+mod embedded_hal_impls {
+    use super::{Flex, Input, Output, OutputOpenDrain};
+    use core::convert::Infallible;
+    use embedded_hal_1::digital::{ErrorType, InputPin, OutputPin, StatefulOutputPin};
+
+    // ---- Input：只读输入 ----
+
+    impl<'d> ErrorType for Input<'d> {
+        type Error = Infallible;
+    }
+
+    impl<'d> InputPin for Input<'d> {
+        #[inline]
+        fn is_high(&mut self) -> Result<bool, Self::Error> {
+            Ok(Input::is_high(self))
+        }
+
+        #[inline]
+        fn is_low(&mut self) -> Result<bool, Self::Error> {
+            Ok(Input::is_low(self))
+        }
+    }
+
+    // ---- Output：推挽输出 ----
+
+    impl<'d> ErrorType for Output<'d> {
+        type Error = Infallible;
+    }
+
+    impl<'d> OutputPin for Output<'d> {
+        #[inline]
+        fn set_high(&mut self) -> Result<(), Self::Error> {
+            Output::set_high(self);
+            Ok(())
+        }
+
+        #[inline]
+        fn set_low(&mut self) -> Result<(), Self::Error> {
+            Output::set_low(self);
+            Ok(())
+        }
+    }
+
+    impl<'d> StatefulOutputPin for Output<'d> {
+        #[inline]
+        fn is_set_high(&mut self) -> Result<bool, Self::Error> {
+            Ok(Output::is_set_high(self))
+        }
+
+        #[inline]
+        fn is_set_low(&mut self) -> Result<bool, Self::Error> {
+            Ok(Output::is_set_low(self))
+        }
+
+        #[inline]
+        fn toggle(&mut self) -> Result<(), Self::Error> {
+            Output::toggle(self);
+            Ok(())
+        }
+    }
+
+    // ---- Flex：可自由切换方向的引脚，三套 trait 都能给 ----
+
+    impl<'d> ErrorType for Flex<'d> {
+        type Error = Infallible;
+    }
+
+    impl<'d> OutputPin for Flex<'d> {
+        #[inline]
+        fn set_high(&mut self) -> Result<(), Self::Error> {
+            Flex::set_high(self);
+            Ok(())
+        }
+
+        #[inline]
+        fn set_low(&mut self) -> Result<(), Self::Error> {
+            Flex::set_low(self);
+            Ok(())
+        }
+    }
+
+    impl<'d> StatefulOutputPin for Flex<'d> {
+        #[inline]
+        fn is_set_high(&mut self) -> Result<bool, Self::Error> {
+            Ok(Flex::is_set_high(self))
+        }
+
+        #[inline]
+        fn is_set_low(&mut self) -> Result<bool, Self::Error> {
+            Ok(Flex::is_set_low(self))
+        }
+
+        #[inline]
+        fn toggle(&mut self) -> Result<(), Self::Error> {
+            Flex::toggle(self);
+            Ok(())
+        }
+    }
+
+    impl<'d> InputPin for Flex<'d> {
+        #[inline]
+        fn is_high(&mut self) -> Result<bool, Self::Error> {
+            Ok(Flex::is_high(self))
+        }
+
+        #[inline]
+        fn is_low(&mut self) -> Result<bool, Self::Error> {
+            Ok(Flex::is_low(self))
+        }
+    }
+
+    // ---- OutputOpenDrain：开漏输出，同时可回读线电平（I2C 式总线常用）----
+
+    impl<'d> ErrorType for OutputOpenDrain<'d> {
+        type Error = Infallible;
+    }
+
+    impl<'d> OutputPin for OutputOpenDrain<'d> {
+        #[inline]
+        fn set_high(&mut self) -> Result<(), Self::Error> {
+            OutputOpenDrain::set_high(self);
+            Ok(())
+        }
+
+        #[inline]
+        fn set_low(&mut self) -> Result<(), Self::Error> {
+            OutputOpenDrain::set_low(self);
+            Ok(())
+        }
+    }
+
+    impl<'d> StatefulOutputPin for OutputOpenDrain<'d> {
+        /// 读 `ODR` 输出锁存（即"本驱动想要输出什么"），不是 `IDR` 线电平。
+        #[inline]
+        fn is_set_high(&mut self) -> Result<bool, Self::Error> {
+            Ok(self.flex.is_set_high())
+        }
+
+        /// 读 `ODR` 输出锁存。见 [`Self::is_set_high`]。
+        #[inline]
+        fn is_set_low(&mut self) -> Result<bool, Self::Error> {
+            Ok(self.flex.is_set_low())
+        }
+
+        #[inline]
+        fn toggle(&mut self) -> Result<(), Self::Error> {
+            OutputOpenDrain::toggle(self);
+            Ok(())
+        }
+    }
+
+    impl<'d> InputPin for OutputOpenDrain<'d> {
+        /// 读 `IDR` **线电平**：开漏释放后若外部无上拉会读到低，属预期。
+        #[inline]
+        fn is_high(&mut self) -> Result<bool, Self::Error> {
+            Ok(OutputOpenDrain::is_high(self))
+        }
+
+        /// 读 `IDR` 线电平。见 [`Self::is_high`]。
+        #[inline]
+        fn is_low(&mut self) -> Result<bool, Self::Error> {
+            Ok(OutputOpenDrain::is_low(self))
+        }
     }
 }

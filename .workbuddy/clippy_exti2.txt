@@ -1,0 +1,202 @@
+cargo :     Checking embassy-py32 v0.1.0 (D:\embassy-for-py32e407\embassy-py32)
+???? ?:445 ??: 204
++ ... ding ascii; cargo clippy --target thumbv7em-none-eabihf --all-feature ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (    Checking em...7\embassy-py32) 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: manual implementation of `.is_multiple_of()`
+   --> src\cordic.rs:319:32
+    |
+319 |         if input.is_empty() || input.len() % nw != 0 || output.len() % nr
+ != 0
+    |                                ^^^^^^^^^^^^^^^^^^^^^ help: replace with: 
+`!input.len().is_multiple_of(nw)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#manual_is_multiple_of
+    = note: `#[warn(clippy::manual_is_multiple_of)]` on by default
+
+warning: manual implementation of `.is_multiple_of()`
+   --> src\cordic.rs:319:57
+    |
+319 |         if input.is_empty() || input.len() % nw != 0 || output.len() % nr
+ != 0
+    |                                                         ^^^^^^^^^^^^^^^^^
+^^^^^ help: replace with: `!output.len().is_multiple_of(nr)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#manual_is_multiple_of
+
+warning: manual implementation of `.is_multiple_of()`
+   --> src\cordic.rs:372:32
+    |
+372 |         if input.is_empty() || input.len() % nw != 0 || output.len() % nr
+ != 0
+    |                                ^^^^^^^^^^^^^^^^^^^^^ help: replace with: 
+`!input.len().is_multiple_of(nw)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#manual_is_multiple_of
+
+warning: manual implementation of `.is_multiple_of()`
+   --> src\cordic.rs:372:57
+    |
+372 |         if input.is_empty() || input.len() % nw != 0 || output.len() % nr
+ != 0
+    |                                                         ^^^^^^^^^^^^^^^^^
+^^^^^ help: replace with: `!output.len().is_multiple_of(nr)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#manual_is_multiple_of
+
+warning: this function has too many arguments (8/7)
+   --> src\esmc.rs:911:5
+    |
+911 | /     pub fn new_blocking_with_cs(
+912 | |         peri: Peri<'d, crate::peripherals::ESMC>,
+913 | |         clk: Peri<'d, impl ClkPin>,
+914 | |         io0: Peri<'d, impl Io0Pin>,
+...   |
+919 | |         config: Config,
+920 | |     ) -> Result<Self, Error> {
+    | |____________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#too_many_arguments
+    = note: `#[warn(clippy::too_many_arguments)]` on by default
+
+warning: unsafe function's docs are missing a `# Safety` section
+   --> src\gpio.rs:196:5
+    |
+196 |     pub const unsafe fn steal(pin_port: u8) -> Peri<'static, Self> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#missing_safety_doc
+    = note: `#[warn(clippy::missing_safety_doc)]` on by default
+
+warning: non-canonical implementation of `clone` on a `Copy` type
+   --> src\gpio.rs:205:29
+    |
+205 |       fn clone(&self) -> Self {
+    |  _____________________________^
+206 | |         Self {
+207 | |             pin_port: self.pin_port,
+208 | |         }
+209 | |     }
+    | |_____^ help: change this to: `{ *self }`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#non_canonical_clone_impl
+    = note: `#[warn(clippy::non_canonical_clone_impl)]` on by default
+
+warning: unneeded late initialization
+   --> src\rcc.rs:632:5
+    |
+632 | /     match config.sys {
+633 | |         Sysclk::HSI => {
+634 | |             sysclk_hz = HSI_HZ;
+635 | |             pll_hz = None;
+...   |
+654 | |     }
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#needless_late_init
+    = note: `#[warn(clippy::needless_late_init)]` on by default
+help: move the declarations here and remove the assignments from the `match` ar
+ms
+    |
+630 ~     
+631 ~     
+632 ~     let (sysclk_hz, pll_hz) = match config.sys {
+633 |         Sysclk::HSI => {
+634 ~             (HSI_HZ, None)
+635 |         }
+636 |         Sysclk::HSE => {
+637 |             let hse = config.hse.as_ref().ok_or(Error::InvalidConfig)?;
+638 ~             (hse.freq.0, None)
+639 |         }
+...
+648 |             let f = src_hz / prediv_div(pll.prediv) * (pll.mul as u32) / 
+postdiv_div(pll.postdiv);
+649 ~             (f, Some(f))
+650 |         }
+651 ~     };
+    |
+
+warning: unsafe function's docs are missing a `# Safety` section
+   --> src\rcc.rs:817:1
+    |
+817 | pub unsafe fn reset_ahb2(mask: u32) {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#missing_safety_doc
+
+warning: unsafe function's docs are missing a `# Safety` section
+   --> src\rcc.rs:826:1
+    |
+826 | pub unsafe fn reset_apb1(rstr1: u32, rstr2: u32) {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#missing_safety_doc
+
+warning: unsafe function's docs are missing a `# Safety` section
+   --> src\rcc.rs:843:1
+    |
+843 | pub unsafe fn reset_apb2(mask: u32) {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#missing_safety_doc
+
+warning: doc list item overindented
+ --> src\timer\mod.rs:7:5
+  |
+7 | //!          TIM9/12??IM10/11/13/14/19??IM15/16/17?????TIM6/7?????6 ???RCC 
+??????
+  |     ^^^^^^^^^ help: try using `  ` (2 spaces)
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy
+/rust-1.98.0/index.html#doc_overindented_list_items
+  = note: `#[warn(clippy::doc_overindented_list_items)]` on by default
+
+warning: casting to the same type is unnecessary (`u32` -> `u32`)
+   --> src\timer\mod.rs:235:19
+    |
+235 |         let psc = ((div - 1) / 0x1_0000) as u32;
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `((div - 1) / 
+0x1_0000)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#unnecessary_cast
+    = note: `#[warn(clippy::unnecessary_cast)]` on by default
+
+warning: this `if` statement can be collapsed
+   --> src\timer\mod.rs:732:9
+    |
+732 | /         if let Some(max_rep) = peri.max_repetition() {
+733 | |             if config.repetition as u32 > max_rep {
+734 | |                 return Err(Error::InvalidConfig);
+735 | |             }
+736 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clip
+py/rust-1.98.0/index.html#collapsible_if
+    = note: `#[warn(clippy::collapsible_if)]` on by default
+help: collapse nested if block
+    |
+732 ~         if let Some(max_rep) = peri.max_repetition()
+733 ~             && config.repetition as u32 > max_rep {
+734 |                 return Err(Error::InvalidConfig);
+735 ~             }
+    |
+
+warning: `embassy-py32` (lib) generated 14 warnings (run `cargo clippy --fix --
+lib -p embassy-py32 -- ` to apply 7 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.53s

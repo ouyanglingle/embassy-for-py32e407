@@ -1,0 +1,143 @@
+{
+  "direction": "TB",
+  "nodes": [
+    {
+      "id": "cordic",
+      "label": "cordic"
+    },
+    {
+      "id": "esmc",
+      "label": "esmc"
+    },
+    {
+      "id": "gpio",
+      "label": "gpio"
+    },
+    {
+      "id": "i2c",
+      "label": "i2c"
+    },
+    {
+      "id": "embassy-py32",
+      "label": "embassy-py32"
+    },
+    {
+      "id": "lpuart",
+      "label": "lpuart"
+    },
+    {
+      "id": "peripherals",
+      "label": "peripherals"
+    },
+    {
+      "id": "rcc",
+      "label": "rcc"
+    },
+    {
+      "id": "spi",
+      "label": "spi"
+    },
+    {
+      "id": "uart",
+      "label": "uart"
+    },
+    {
+      "id": "usart",
+      "label": "usart"
+    },
+    {
+      "id": "exti::blocking",
+      "label": "blocking",
+      "group": "exti"
+    },
+    {
+      "id": "exti::low_level",
+      "label": "low_level",
+      "group": "exti"
+    },
+    {
+      "id": "exti",
+      "label": "exti"
+    },
+    {
+      "id": "timer",
+      "label": "timer"
+    },
+    {
+      "id": "timer::pwm",
+      "label": "pwm",
+      "group": "timer"
+    },
+    {
+      "id": "timer::qei",
+      "label": "qei",
+      "group": "timer"
+    }
+  ],
+  "edges": [
+    {
+      "source": "cordic",
+      "target": "peripherals"
+    },
+    {
+      "source": "esmc",
+      "target": "gpio"
+    },
+    {
+      "source": "exti",
+      "target": "gpio"
+    },
+    {
+      "source": "exti::blocking",
+      "target": "exti"
+    },
+    {
+      "source": "exti::blocking",
+      "target": "exti::low_level"
+    },
+    {
+      "source": "i2c",
+      "target": "gpio"
+    },
+    {
+      "source": "lpuart",
+      "target": "gpio"
+    },
+    {
+      "source": "peripherals",
+      "target": "gpio"
+    },
+    {
+      "source": "spi",
+      "target": "gpio"
+    },
+    {
+      "source": "timer::pwm",
+      "target": "gpio"
+    },
+    {
+      "source": "timer::pwm",
+      "target": "timer"
+    },
+    {
+      "source": "timer::qei",
+      "target": "gpio"
+    },
+    {
+      "source": "timer::qei",
+      "target": "timer"
+    },
+    {
+      "source": "timer::qei",
+      "target": "timer::pwm"
+    },
+    {
+      "source": "uart",
+      "target": "gpio"
+    },
+    {
+      "source": "usart",
+      "target": "gpio"
+    }
+  ]
+}

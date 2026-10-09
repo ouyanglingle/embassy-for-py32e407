@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "pyocd (Debug)",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/Debug/demo.elf",
+      "request": "launch",
+      "type": "cortex-debug",
+      "targetId": "PY32E407xE",
+      "runToEntryPoint": "main",
+      "showDevDebugOutput": "none",
+      "servertype": "pyocd",
+      "overrideGDBServerStartedRegex": "GDB server listening on port",
+      "cmsisPack": "${env:PYSDEPATH}/packs/PY32E4xx_DFP.pack",
+      "svdFile": "${env:PYSDEPATH}/svd/PY32E407xx.svd",
+      "preLaunchTask": "CMake: 构建"
+    },
+    {
+      "name": "openocd (Debug)",
+      "cwd": "${workspaceFolder}",
+      "type": "cortex-debug",
+      "request": "launch",
+      "executable": "${workspaceFolder}/build/Debug/demo.elf",
+      "runToEntryPoint": "main",
+      "servertype": "openocd",
+      "configFiles": [
+        "interface/cmsis-dap.cfg",
+        "target/py32e407.cfg"
+      ],
+      "toolchainPrefix": "arm-none-eabi",
+      "svdFile": "${env:PYSDEPATH}/svd/PY32E407xx.svd",
+      "preLaunchTask": "CMake: 构建"
+    },
+    {
+      "name": "jlink (Debug)",
+      "cwd": "${workspaceFolder}",
+      "type": "cortex-debug",
+      "request": "launch",
+      "executable": "${workspaceFolder}/build/Debug/demo.elf",
+      "runToEntryPoint": "main",
+      "servertype": "jlink",
+      "interface": "swd",
+      "device": "PY32E407xE",
+      "toolchainPrefix": "arm-none-eabi",
+      "svdFile": "${env:PYSDEPATH}/svd/PY32E407xx.svd",
+      "preLaunchTask": "CMake: 构建"
+    }
+  ]
+}

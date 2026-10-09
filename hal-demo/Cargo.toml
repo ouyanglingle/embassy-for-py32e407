@@ -1,0 +1,22 @@
+[package]
+name = "hal-demo"
+version = "0.1.0"
+edition = "2021"
+description = "示例：用 py32e407cbind-rs（LL）+ py32e407hal-rs（HAL）走正常启动流程，HAL UART2 DMA 收发 + PC3 每 1ms 翻转"
+
+[dependencies]
+defmt = "0.3"
+defmt-rtt = "0.4"
+cortex-m-rt = "0.7.5"
+# 与 cbind-demo 同款：defmt-rtt 要 critical-section，cortex-m 提供但不直接被引用
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+
+# HAL 自身依赖 LL 的符号（HAL 是 LL 之上的状态机封装），必须两个 crate 同时加。
+py32e407cbind-rs = { path = "../py32e407cbind-rs" }
+py32e407hal-rs    = { path = "../py32e407hal-rs" }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = true

@@ -1,0 +1,160 @@
+version: '4.1'
+name: demo
+type: ARM
+deviceName: PY32E407xE
+packDir: ''
+srcDirs: []
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders:
+    - name: Application
+      files: []
+      folders:
+        - name: EIDE
+          files:
+            - path: startup_py32e407xx.s
+          folders: []
+        - name: User
+          files: []
+          folders:
+            - name: Core
+              files:
+                - path: ../Core/SRC/main.c
+                - path: ../Core/SRC/gpio.c
+                - path: ../Core/SRC/rng.c
+                - path: ../Core/SRC/cordic.c
+                - path: ../Core/SRC/crc.c
+                - path: ../Core/SRC/tim.c
+                - path: ../Core/SRC/usb_otg.c
+                - path: ../Core/SRC/esmc.c
+                - path: ../Core/SRC/fdcan.c
+                - path: ../Core/SRC/lpuart.c
+                - path: ../Core/SRC/uart.c
+                - path: ../Core/SRC/usart.c
+                - path: ../Core/SRC/spi.c
+                - path: ../Core/SRC/i2c.c
+                - path: ../Core/SRC/rcc.c
+                - path: ../Core/SRC/py32e407_it.c
+                - path: ../Core/SRC/py32e407_hal_msp.c
+              folders: []
+    - name: Drivers
+      files: []
+      folders:
+        - name: CMSIS
+          files:
+            - path: ../Core/SRC/system_py32e407.c
+          folders: []
+        - name: PY32E407_HAL_Driver
+          files:
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_rcc.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_rcc_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_pwr.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_cortex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_dma.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_flash.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_flash_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_gpio.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_pwr_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_exti.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_i2c.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_i2c_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_spi.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_usart.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_usart_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_sci.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_sci_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_irda.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_smartcard.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_smartcard_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_uart.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_lpuart.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_lpuart_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_cordic.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_tim.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_tim_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_crc.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_crc_ex.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_rng.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_fdcan.c
+            - path: ../Drivers/PY32E407_HAL_Driver/Src/py32e407_hal_esmc.c
+          folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: ''
+targets:
+  Debug:
+    cppPreprocessAttrs:
+      defineList:
+        - PY32E407xE
+        - USE_HAL_DRIVER
+      incList:
+        - ../Core/INC
+        - ../Drivers/CMSIS/Include
+        - ../Drivers/PY32E407_HAL_Driver/Inc
+        - ../Drivers/CMSIS/Device/PY32E407/Include
+      libList: []
+    excludeList: []
+    toolchain: GCC
+    toolchainConfigMap:
+      GCC:
+        archExtensions: ''
+        cpuType: Cortex-M4
+        floatingPointHardware: single
+        options:
+          version: 5
+          afterBuildTasks: []
+          asm-compiler:
+            ASM_FLAGS: ''
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            CXX_FLAGS: ''
+            C_FLAGS: ''
+            language-c: c11
+            language-cpp: c++11
+            one-elf-section-per-data: true
+            one-elf-section-per-function: true
+            optimization: level-debug
+            warnings: all-warnings
+          global:
+            $float-abi-type: hard
+            misc-control: >-
+              --specs=nosys.specs --specs=nano.specs -mfloat-abi=hard
+              -mfpu=vfpv4-d16
+            output-debug-info: enable
+          linker:
+            $toolName: auto
+            LD_FLAGS: ' '
+            LIB_FLAGS: '-lm'
+            output-format: elf
+            remove-unused-input-sections: true
+        scatterFilePath: PY32E407V1ET7.ld
+        storageLayout:
+          RAM: []
+          ROM: []
+        useCustomScatterFile: true
+    uploadConfigMap:
+      JLink:
+        baseAddr: ''
+        bin: ''
+        cpuInfo:
+          cpuName: PY32E407xE
+          endor: Puya
+        otherCmds: ''
+        proType: 1
+        speed: 1000
+      OpenOCD:
+        baseAddr: '0x08000000'
+        bin: ''
+        interface: cmsis-dap
+        target: py32e407
+      pyOCD:
+        baseAddr: '0x08000000'
+        bin: ''
+        config: .eide/debug.pyocd.yaml
+        otherCmds: '"--pack=${env:PYSDEPATH}/packs/PY32E4xx_DFP.pack"'
+        speed: 4M
+        targetName: PY32E407xE
+    uploader: pyOCD

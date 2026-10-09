@@ -754,3 +754,59 @@ fn init_regs<T: Instance>(pclk: u32, config: &Config) -> Result<(), Error> {
     regs.cr1().modify(|_, w| w.pe().set_bit());
     Ok(())
 }
+
+// ---------------------------------------------------------------------------
+// embedded-hal 1.0 兼容实现（由 crate feature `embedded-hal-1` 开启）
+// ---------------------------------------------------------------------------
+//
+// impl 写在类型所属 crate 内部（孤儿规则，理由见 `crate::gpio` 的对应小节）。
+//
+// `embedded-hal` 的 `I2c` trait 里只有 `transaction()` 是必实现的，`read` /
+// `write` / `write_read` 都由它默认转发。本驱动只有整段的
+// `blocking_write` / `blocking_read` / `blocking_write_read`，因此
+// `transaction()` 只支持这三种形态（覆盖寄存器读写等绝大多数场景）；
+// 更复杂的组合（如 `Read` 后接 `Write`、连续两段 `Write`）无法用现有 API 表达，
+// 返回 [`Error::InvalidConfig`]。
+#[cfg(feature = "embedded-hal-1")]
+mod embedded_hal_impls {
+    use super::{Error, I2c, Instance};
+    use embedded_hal_1::i2c::{
+        ErrorKind, ErrorType, I2c as I2cTrait, NoAcknowledgeSource, Operation,
+    };
+
+    /// `embedded-hal` 的 I2C 错误分类映射。
+    impl embedded_hal_1::i2c::Error for Error {
+        fn kind(&self) -> ErrorKind {
+            match self {
+                // 本驱动不区分"地址未应答"与"数据未应答"，按规范填 Unknown
+                Self::Nack => ErrorKind::NoAcknowledge(NoAcknowledgeSource::Unknown),
+                Self::Bus => ErrorKind::Bus,
+                Self::Arbitration => ErrorKind::ArbitrationLoss,
+                Self::Overrun => ErrorKind::Overrun,
+                // `ErrorKind` 没有 Timeout 变体；配置错误亦无对应变体
+                Self::Timeout | Self::InvalidConfig => ErrorKind::Other,
+            }
+        }
+    }
+
+    impl<'d, T: Instance> ErrorType for I2c<'d, T> {
+        type Error = Error;
+    }
+
+    impl<'d, T: Instance> I2cTrait for I2c<'d, T> {
+        fn transaction(
+            &mut self,
+            address: u8,
+            operations: &mut [Operation<'_>],
+        ) -> Result<(), Self::Error> {
+            match operations {
+                [Operation::Write(data)] => self.blocking_write(address, data),
+                [Operation::Read(data)] => self.blocking_read(address, data),
+                [Operation::Write(prefix), Operation::Read(data)] => {
+                    self.blocking_write_read(address, prefix, data)
+                }
+                _ => Err(Error::InvalidConfig),
+            }
+        }
+    }
+}

@@ -15,11 +15,37 @@
 //! let mut led = Output::new(p.PA5, Level::Low, Speed::Low);
 //! led.toggle();
 //! ```
+//!
+//! # Cargo features
+//!
+//! - **`embedded-hal-1`**（可选，默认关闭）：为已有外设实现 `embedded-hal` 1.0 的
+//!   trait，使 `embedded-hal` 生态的第三方驱动可以直接接收本 HAL 的类型。
+//!   impl 全部写在**本 crate 内部**（对齐 embassy-stm32 的做法）——trait 与类型
+//!   对下游都是外部项，下游受孤儿规则限制无法自行 impl，只能写 newtype 适配层。
+//!   开启后可用：
+//!
+//!   | 本 HAL 类型 | 实现的 trait |
+//!   |---|---|
+//!   | [`gpio::Input`] | `digital::InputPin` |
+//!   | [`gpio::Output`] | `digital::OutputPin` + `StatefulOutputPin` |
+//!   | [`gpio::Flex`] | `digital::OutputPin` + `InputPin` + `StatefulOutputPin` |
+//!   | [`gpio::OutputOpenDrain`] | `digital::OutputPin` + `InputPin` + `StatefulOutputPin` |
+//!   | [`exti::ExtiInput`] | `digital::InputPin` |
+//!   | [`spi::Spi`]（主机） | `spi::SpiBus<u8>` + `spi::SpiBus<u16>` |
+//!   | [`i2c::I2c`] | `i2c::I2c` |
+//!   | [`timer::pwm::PwmChannel`] | `pwm::SetDutyCycle` |
+//!
+//!   未覆盖的：UART（`embedded-hal` 1.0 已把串口 trait 移出核心，需 `embedded-io`
+//!   或 `embedded-hal-nb`）、QEI（`embedded-hal` 无编码器 trait）、延时
+//!   （`delay::DelayNs`，可用 `timer` 自行拼或忙等实现）。
 
 #![no_std]
 
 use core::marker::PhantomData;
 
+pub mod cordic;
+pub mod esmc;
+pub mod exti;
 pub mod gpio;
 pub mod i2c;
 pub mod lpuart;

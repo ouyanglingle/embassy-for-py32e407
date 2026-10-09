@@ -1,0 +1,13 @@
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# PY32E407xE 不在 probe-rs 内置芯片库里，故用同工作区 demo-py32 里的芯片描述文件。
+runner = "probe-rs run --chip-description-path ../demo-py32/PY32E4_Series.yaml --chip PY32E407xE --speed 10000"
+
+[build]
+# PY32E407 为 Cortex-M4F 内核（与同工作区其它 crate 一致）
+target = "thumbv7em-none-eabihf"
+
+[env]
+# defmt 的日志等级是**编译期**过滤的（defmt 宏展开时读该变量）。
+# 不设置时默认等级是 error —— defmt::info! 会被直接编译掉、连字符串都进不了 .defmt 段。
+# 想看得更细可改成 debug / trace；改完需要重新编译（cargo 会自动感知该变量变化）。
+DEFMT_LOG = "info"

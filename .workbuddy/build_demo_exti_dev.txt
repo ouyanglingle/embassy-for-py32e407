@@ -1,0 +1,12 @@
+cargo :    Compiling demo-py32 v0.1.0 (D:\embassy-for-py32e407\demo-py32)
+???? ?:445 ??: 49
++ ... -Location D:\embassy-for-py32e407\demo-py32; cargo build 2>&1 | Out-F ...
++                                                  ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling de...e407\demo-py32) 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   Compiling micromath v2.1.0
+   Compiling libm v0.2.16
+   Compiling embassy-py32 v0.1.0 (D:\embassy-for-py32e407\embassy-py32)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 16.17s

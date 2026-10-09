@@ -1,0 +1,10 @@
+cargo :    Compiling demo-py32 v0.1.0 (D:\embassy-for-py32e407\demo-py32)
+???? ?:445 ??: 49
++ ... D:\embassy-for-py32e407\demo-py32; cargo build --release 2>&1 | Out-F ...
++                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling de...e407\demo-py32) 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   Compiling embassy-py32 v0.1.0 (D:\embassy-for-py32e407\embassy-py32)
+    Finished `release` profile [optimized + debuginfo] target(s) in 11.69s

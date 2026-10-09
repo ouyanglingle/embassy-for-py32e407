@@ -1,0 +1,7 @@
+.workbuddy\_b.txt exists=False
+.workbuddy\_run.txt exists=False
+.workbuddy\memory\__chk.txt exists=True
+--- delete __chk ---
+ERR [safe-delete][SAFE_DELETE_FAIL_CLOSED] {"target":"D:\\embassy-for-py32e407\\.workbuddy\\memory\\__chk.txt","reason":"trash-failed","detail":"ERROR D:\\embassy-for-py32e407\\.workbuddy\\memory\\__chk.txt: Error during a `trash` operation: Unknown { description: \"Some operations were aborted\" }"}
+memory dir: 2026-09-06.md, 2026-09-07.md, 2026-09-12.md, 2026-09-13.md, 2026-09-14.md, 2026-09-16.md
+wb dir:     memory, skills

@@ -10,7 +10,12 @@ defmt-rtt = "0.4"
 # 本地生成的 PAC（SVD 补丁版）
 py32e407-pac = { path = "../py32e407-pac", features = ["rt", "critical-section"] }
 # 同步外设驱动库
-embassy-py32 = { path = "../embassy-py32" }
+# 开启 `embedded-hal-1`：让 embassy-py32 直接实现 embedded-hal 1.0 trait，
+# 第三方驱动可原生接收其类型（`lcd_hal.rs` 那套 newtype 适配层仍可继续用）。
+embassy-py32 = { path = "../embassy-py32", features = ["embedded-hal-1"] }
+# bp_pid 的 no_std 数学函数（F32Ext::sqrt / expf / tanhf）
+micromath = "2.0"
+libm = "0.2"
 # LCD 兼容层：参考 ST7735 驱动泛型于 embedded-hal 1.0 的 SpiBus/OutputPin/DelayNs
 embedded-hal = "1.0"
 # inline-asm：cortex_m::asm::delay 在 Delay（DelayNs 适配器）里使用

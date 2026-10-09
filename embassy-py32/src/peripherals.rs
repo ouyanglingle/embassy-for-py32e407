@@ -1,6 +1,8 @@
 //! 外设单例（对齐 embassy-stm32 的 `peripherals` 模块形态）。
 //!
-//! 目前含 GPIO 引脚（PA0…PF15）与串口外设（UART1/2/3、USART1/2/3、LPUART1）。每个类型都是零大小的标记
+//! 目前含 GPIO 引脚（PA0…PF15）、串口（UART1/2/3、USART1/2/3、LPUART1）、
+//! SPI/I2C/TIM/CORDIC/ESMC，以及 EXTI 线通道（EXTI0…EXTI15，见 [`crate::exti`]）。
+//! 每个类型都是零大小的标记
 //! 类型；[`Peripherals`] 结构体的字段是 [`crate::Peri`] 句柄，由 [`crate::init`]
 //! 一次性取出（对齐 embassy 的 `p.PA5` / `p.UART2` 访问方式）。
 //!
@@ -150,6 +152,39 @@ pin!(PF13, 5, 13);
 pin!(PF14, 5, 14);
 pin!(PF15, 5, 15);
 
+/// 为每个引脚实现 [`crate::gpio::ExtiPin`]：**线号只由引脚号决定**，端口只影响
+/// `SYSCFG_EXTICR` 里的选择值（RM 13.2.4）——所以 `PA5` / `PB5` / `PC5` … 都是 `EXTI5`。
+///
+/// 用独立宏块而不是给上面的 [`pin!`] 加参数，是为了不动既有引脚定义。
+macro_rules! impl_exti_pin {
+    ($($pin:ident => $ch:ident,)*) => {
+        $(
+            impl crate::gpio::ExtiPin for $pin {
+                type ExtiChannel = $ch;
+            }
+        )*
+    };
+}
+
+impl_exti_pin! {
+    PA0 => EXTI0, PB0 => EXTI0, PC0 => EXTI0, PD0 => EXTI0, PE0 => EXTI0, PF0 => EXTI0,
+    PA1 => EXTI1, PB1 => EXTI1, PC1 => EXTI1, PD1 => EXTI1, PE1 => EXTI1, PF1 => EXTI1,
+    PA2 => EXTI2, PB2 => EXTI2, PC2 => EXTI2, PD2 => EXTI2, PE2 => EXTI2, PF2 => EXTI2,
+    PA3 => EXTI3, PB3 => EXTI3, PC3 => EXTI3, PD3 => EXTI3, PE3 => EXTI3, PF3 => EXTI3,
+    PA4 => EXTI4, PB4 => EXTI4, PC4 => EXTI4, PD4 => EXTI4, PE4 => EXTI4, PF4 => EXTI4,
+    PA5 => EXTI5, PB5 => EXTI5, PC5 => EXTI5, PD5 => EXTI5, PE5 => EXTI5, PF5 => EXTI5,
+    PA6 => EXTI6, PB6 => EXTI6, PC6 => EXTI6, PD6 => EXTI6, PE6 => EXTI6, PF6 => EXTI6,
+    PA7 => EXTI7, PB7 => EXTI7, PC7 => EXTI7, PD7 => EXTI7, PE7 => EXTI7, PF7 => EXTI7,
+    PA8 => EXTI8, PB8 => EXTI8, PC8 => EXTI8, PD8 => EXTI8, PE8 => EXTI8, PF8 => EXTI8,
+    PA9 => EXTI9, PB9 => EXTI9, PC9 => EXTI9, PD9 => EXTI9, PE9 => EXTI9, PF9 => EXTI9,
+    PA10 => EXTI10, PB10 => EXTI10, PC10 => EXTI10, PD10 => EXTI10, PE10 => EXTI10, PF10 => EXTI10,
+    PA11 => EXTI11, PB11 => EXTI11, PC11 => EXTI11, PD11 => EXTI11, PE11 => EXTI11, PF11 => EXTI11,
+    PA12 => EXTI12, PB12 => EXTI12, PC12 => EXTI12, PD12 => EXTI12, PE12 => EXTI12, PF12 => EXTI12,
+    PA13 => EXTI13, PB13 => EXTI13, PC13 => EXTI13, PD13 => EXTI13, PE13 => EXTI13, PF13 => EXTI13,
+    PA14 => EXTI14, PB14 => EXTI14, PC14 => EXTI14, PD14 => EXTI14, PE14 => EXTI14, PF14 => EXTI14,
+    PA15 => EXTI15, PB15 => EXTI15, PC15 => EXTI15, PD15 => EXTI15, PE15 => EXTI15, PF15 => EXTI15,
+}
+
 /// 生成一个非 GPIO 的外设标记类型（`PeripheralType`）。
 ///
 /// 具体功能（寄存器块、RCC 位、引脚 AF）由对应驱动模块的密封 trait 提供，
@@ -218,6 +253,34 @@ periph!(TIM17);
 periph!(TIM18);
 periph!(TIM19);
 
+// CORDIC 协处理器（RM 第 43 章）：单实例 0x4002_C000，
+// 时钟/复位在 RCC_AHB1ENR / AHB1RSTR（bit5）。
+periph!(CORDIC);
+
+// 外部串行存储控制器 ESMC / QSPI（RM 第 30 章）：单实例 0xA000_1000（AHB3），
+// 时钟/复位在 RCC_AHB1ENR / AHB1RSTR（bit12，ESMCEN/ESMCRST）。
+periph!(ESMC);
+
+// EXTI 通道（RM 第 13 章）：**不是独立外设**，而是"EXTI 线"的所有权句柄。
+// 理由同 embassy-stm32：一条线可能被同端口号的多个引脚共用（PA5/PB5/PC5… → EXTI5），
+// 借由单例保证同一时刻只有一个驱动能占用它。通道实现见 [`crate::exti::Channel`]。
+periph!(EXTI0);
+periph!(EXTI1);
+periph!(EXTI2);
+periph!(EXTI3);
+periph!(EXTI4);
+periph!(EXTI5);
+periph!(EXTI6);
+periph!(EXTI7);
+periph!(EXTI8);
+periph!(EXTI9);
+periph!(EXTI10);
+periph!(EXTI11);
+periph!(EXTI12);
+periph!(EXTI13);
+periph!(EXTI14);
+periph!(EXTI15);
+
 /// 生成 [`Peripherals`] 结构体与 `take()`。
 macro_rules! impl_peripherals {
     ($($name:ident,)*) => {
@@ -253,5 +316,7 @@ impl_peripherals!(
     PE8, PE9, PE10, PE11, PE12, PE13, PE14, PE15, PF0, PF1, PF2, PF3, PF4, PF5, PF6, PF7, PF8, PF9,
     PF10, PF11, PF12, PF13, PF14, PF15, UART1, UART2, UART3, LPUART1, USART1, USART2, USART3, SPI1,
     SPI2, SPI3, I2C1, I2C2, I2C3, I2C4, TIM1, TIM2, TIM3, TIM4, TIM5, TIM6, TIM7, TIM8, TIM9, TIM10,
-    TIM11, TIM12, TIM13, TIM14, TIM15, TIM16, TIM17, TIM18, TIM19,
+    TIM11, TIM12, TIM13, TIM14, TIM15, TIM16, TIM17, TIM18, TIM19, CORDIC, ESMC,
+    EXTI0, EXTI1, EXTI2, EXTI3, EXTI4, EXTI5, EXTI6, EXTI7, EXTI8, EXTI9, EXTI10, EXTI11, EXTI12,
+    EXTI13, EXTI14, EXTI15,
 );

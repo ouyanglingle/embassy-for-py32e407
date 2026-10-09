@@ -1,0 +1,79 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cmake",
+      "label": "CMake: 配置",
+      "command": "configure",
+      "preset": "${input:buildPreset}",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "type": "cmake",
+      "label": "CMake: 构建",
+      "command": "build",
+      "preset": "${input:buildPreset}",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "type": "cmake",
+      "label": "CMake: 清理",
+      "command": "clean",
+      "preset": "${input:buildPreset}",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "pyocd 下载",
+      "command": "pyocd",
+      "args": [
+        "load",
+        "build/${input:buildPreset}/demo.elf",
+        "--target=PY32E407xE",
+        "--frequency=1000000",
+        "--pack=${env:PYSDEPATH}/packs/PY32E4xx_DFP.pack"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": "CMake: 构建"
+    },
+    {
+      "type": "shell",
+      "label": "openocd 下载",
+      "command": "openocd",
+      "args": [
+        "-f",
+        "interface/cmsis-dap.cfg",
+        "-f",
+        "target/py32e407.cfg",
+        "-c",
+        "program build/${input:buildPreset}/demo.elf verify reset exit"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": "CMake: 构建"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "buildPreset",
+      "type": "pickString",
+      "description": "选择构建配置",
+      "options": [
+        "Debug",
+        "Release",
+        "MinSizeRel"
+      ],
+      "default": "Debug"
+    }
+  ]
+}

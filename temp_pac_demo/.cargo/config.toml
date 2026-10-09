@@ -1,0 +1,7 @@
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# probe-rs 烧录：复用 demo-py32 已验证的 PY32E4_Series.yaml 芯片描述
+runner = "probe-rs run --chip-description-path ../demo-py32/PY32E4_Series.yaml --chip PY32E407xE --speed 10000"
+
+[build]
+# PY32E407 为 Cortex-M4 内核
+target = "thumbv7em-none-eabihf"

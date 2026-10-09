@@ -1,0 +1,60 @@
+
+e6e17c4e96377971-py32e407_ll_adc.o:
+
+e6e17c4e96377971-py32e407_ll_comp.o:
+
+e6e17c4e96377971-py32e407_ll_cordic.o:
+
+e6e17c4e96377971-py32e407_ll_crc.o:
+
+e6e17c4e96377971-py32e407_ll_ctc.o:
+
+e6e17c4e96377971-py32e407_ll_dac.o:
+
+e6e17c4e96377971-py32e407_ll_dma.o:
+
+e6e17c4e96377971-py32e407_ll_exti.o:
+
+e6e17c4e96377971-py32e407_ll_gpio.o:
+
+e6e17c4e96377971-py32e407_ll_i2c.o:
+         U LL_RCC_GetSystemClocksFreq
+
+e6e17c4e96377971-py32e407_ll_lcdc.o:
+
+e6e17c4e96377971-py32e407_ll_lptim.o:
+         U LL_RCC_GetSystemClocksFreq
+
+e6e17c4e96377971-py32e407_ll_lpuart.o:
+         U __aeabi_uldivmod
+         U LL_RCC_GetLPUART1ClockFreq
+
+e6e17c4e96377971-py32e407_ll_opa.o:
+
+e6e17c4e96377971-py32e407_ll_pwr.o:
+
+e6e17c4e96377971-py32e407_ll_rcc.o:
+         U AHBPrescTable
+         U APBPrescTable
+         U SystemCoreClock
+
+e6e17c4e96377971-py32e407_ll_rng.o:
+
+e6e17c4e96377971-py32e407_ll_rtc.o:
+
+e6e17c4e96377971-py32e407_ll_spi.o:
+         U LL_RCC_GetSystemClocksFreq
+
+e6e17c4e96377971-py32e407_ll_tim.o:
+
+e6e17c4e96377971-py32e407_ll_uart.o:
+         U LL_RCC_GetSystemClocksFreq
+
+e6e17c4e96377971-py32e407_ll_usart.o:
+         U LL_RCC_GetUSART1ClockFreq
+         U LL_RCC_GetUSART2ClockFreq
+         U LL_RCC_GetUSART3ClockFreq
+
+e6e17c4e96377971-py32e407_ll_utils.o:
+         U AHBPrescTable
+         U SystemCoreClock

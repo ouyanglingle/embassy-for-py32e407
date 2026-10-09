@@ -1,0 +1,7 @@
+# CMake 构建产物
+build/
+cmake-build-*/
+
+# 调试 / 下载器临时文件
+*.jlink
+.gdbinit

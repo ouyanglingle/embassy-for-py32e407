@@ -898,3 +898,90 @@ fn clear_pending_errors<W: Word>(regs: &'static pac::spi1::RegisterBlock) {
         regs.sr().modify(|_, w| w.crcerr().clear_bit());
     }
 }
+
+// ---------------------------------------------------------------------------
+// embedded-hal 1.0 兼容实现（由 crate feature `embedded-hal-1` 开启）
+// ---------------------------------------------------------------------------
+//
+// impl 写在类型所属 crate 内部（孤儿规则，理由见 `crate::gpio` 的对应小节）。
+// `SpiBus` 是"一整根 SPI 总线"的抽象，只在主机模式下成立（从机没有时钟源）。
+// `u8` 与 `u16` 两种帧宽都实现：帧宽由 `set_word_size::<W>` 按 `W` 自动切换，
+// 无需调用方干预。
+#[cfg(feature = "embedded-hal-1")]
+mod embedded_hal_impls {
+    use super::{Error, Instance, Master, Spi};
+    use embedded_hal_1::spi::{ErrorKind, ErrorType, SpiBus};
+
+    /// `embedded-hal` 的 SPI 错误分类映射。
+    impl embedded_hal_1::spi::Error for Error {
+        fn kind(&self) -> ErrorKind {
+            match self {
+                Self::Overrun => ErrorKind::Overrun,
+                Self::ModeFault => ErrorKind::ModeFault,
+                // 本驱动只有 TI 从模式会置 FRE，语义上即帧格式错误
+                Self::Framing => ErrorKind::FrameFormat,
+                // 未启用硬件 CRC；超时与配置错误在 `ErrorKind` 里没有对应变体
+                Self::Crc | Self::Timeout | Self::InvalidConfig => ErrorKind::Other,
+            }
+        }
+    }
+
+    impl<'d, T: Instance> ErrorType for Spi<'d, T, Master> {
+        type Error = Error;
+    }
+
+    impl<'d, T: Instance> SpiBus<u8> for Spi<'d, T, Master> {
+        #[inline]
+        fn read(&mut self, words: &mut [u8]) -> Result<(), Self::Error> {
+            self.blocking_read::<u8>(words)
+        }
+
+        #[inline]
+        fn write(&mut self, words: &[u8]) -> Result<(), Self::Error> {
+            self.blocking_write::<u8>(words)
+        }
+
+        #[inline]
+        fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Self::Error> {
+            self.blocking_transfer::<u8>(read, write)
+        }
+
+        #[inline]
+        fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Self::Error> {
+            self.blocking_transfer_in_place::<u8>(words)
+        }
+
+        #[inline]
+        fn flush(&mut self) -> Result<(), Self::Error> {
+            // 必须走全限定路径：固有方法与本 trait 方法同名，`self.flush()` 会递归到 trait 自身
+            Spi::flush(self)
+        }
+    }
+
+    impl<'d, T: Instance> SpiBus<u16> for Spi<'d, T, Master> {
+        #[inline]
+        fn read(&mut self, words: &mut [u16]) -> Result<(), Self::Error> {
+            self.blocking_read::<u16>(words)
+        }
+
+        #[inline]
+        fn write(&mut self, words: &[u16]) -> Result<(), Self::Error> {
+            self.blocking_write::<u16>(words)
+        }
+
+        #[inline]
+        fn transfer(&mut self, read: &mut [u16], write: &[u16]) -> Result<(), Self::Error> {
+            self.blocking_transfer::<u16>(read, write)
+        }
+
+        #[inline]
+        fn transfer_in_place(&mut self, words: &mut [u16]) -> Result<(), Self::Error> {
+            self.blocking_transfer_in_place::<u16>(words)
+        }
+
+        #[inline]
+        fn flush(&mut self) -> Result<(), Self::Error> {
+            Spi::flush(self)
+        }
+    }
+}

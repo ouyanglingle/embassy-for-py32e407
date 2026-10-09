@@ -1,0 +1,9 @@
+cargo :     Checking embassy-py32 v0.1.0 (D:\embassy-for-py32e407\embassy-py32)
+???? ?:445 ??: 52
++ ... bassy-py32; cargo check --target thumbv7em-none-eabihf --features emb ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (    Checking em...7\embassy-py32) 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.37s

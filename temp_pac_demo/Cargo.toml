@@ -1,0 +1,36 @@
+[package]
+name = "temp_pac_demo"
+version = "0.1.0"
+edition = "2021"
+description = "最小示例：仅用 svd2rust 生成的 PAC（py32e407-pac）做 GPIO 与 RCC 操作，通过 embassy-executor 异步执行器管理启动流程"
+
+[dependencies]
+# PAC：仅开 rt（中断向量表），不开 critical-section（我们只用 steal()，不需要 critical_section::Mutex 包裹）
+py32e407-pac = { path = "../py32e407-pac", features = ["rt"] }
+# cortex-m-rt：启动 + Reset + #[entry]（被 embassy_executor::main 自动加上）
+cortex-m-rt = "0.7.5"
+# cortex-m 0.7：用于配置 SysTick，以及提供 critical_section::with() 的具体实现
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+# embassy-executor：异步执行器
+#   - platform-cortex-m：使用 cortex_m_rt::entry + WFE/SEV 的线程模式执行器
+#   - executor-thread：单线程（main 线程）执行器，任务在 thread mode 调度
+embassy-executor = { version = "0.10", features = ["platform-cortex-m", "executor-thread"] }
+# embassy-time：提供 Instant/Duration/Timer::after().await
+#   - tick-hz-1_000：时基 1 kHz（每毫秒 1 tick），与 SysTick 1ms 配置一致
+#   - generic-queue-8：用通用的软定时器队列（容量 8），无需 HAL 集成
+embassy-time = { version = "0.5", features = ["tick-hz-1_000", "generic-queue-8"] }
+# embassy-time-driver：Driver trait —— 我们要在 time_driver.rs 里实现它
+embassy-time-driver = "0.2"
+# embassy-time-queue-utils：通用 Queue 实现（heapless::Vec<{Waker, at}>，固定容量 8）
+embassy-time-queue-utils = "0.3"
+# heapless：Queue 底层用的 Vec
+heapless = "0.8"
+# critical-section：embassy-time / embassy-executor / cortex-m 都依赖的临界区抽象。
+# cortex-m 0.7 开启 critical-section-single-core 后给出具体实现。
+critical-section = "1.1"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = true

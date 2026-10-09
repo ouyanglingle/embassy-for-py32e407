@@ -1,0 +1,1 @@
+arm-none-eabi-gcc.exe: warning: wrapper_gen.h.gen: linker input file unused because linking not done

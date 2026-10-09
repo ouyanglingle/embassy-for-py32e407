@@ -1,0 +1,25 @@
+[package]
+name = "py32e407hal-rs"
+version = "0.1.0"
+edition = "2021"
+description = "PUYA 官方 C HAL 驱动的 bindgen/cc FFI 封装：与 py32e407cbind-rs 对偶，但覆盖 HAL 这一层（带状态机/回调/USBD/SD/ETH 等 LL 不提供的协议封装）"
+
+[build-dependencies]
+cc = "1.0"
+bindgen = "0.71"
+
+[dependencies]
+# HAL 的 .c 引用了 LL_* 符号（HAL 是 LL 之上的状态机封装），所以本 crate 必须
+# 同时把 cbind-rs 链接进来。这与"用户依赖里同时加 cbind-rs + hal-rs"语义一致：
+# hal-rs 自己保证编译产物可链上 cbind-rs。
+py32e407cbind-rs = { path = "../py32e407cbind-rs" }
+
+[features]
+# 默认开 USE_HAL_DRIVER；HAL 头里大部分有用代码被 #ifdef 收着
+default = []
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = false

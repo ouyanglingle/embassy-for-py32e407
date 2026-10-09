@@ -27,8 +27,8 @@
 
 use core::sync::atomic::{AtomicU32, Ordering};
 
-use crate::pac;
 pub use crate::Hertz;
+use crate::pac;
 
 /// HSI16 频率（`py32e407_ll_rcc.h` 的 `HSI_VALUE`，复位默认系统时钟源）。
 pub const HSI_HZ: u32 = 16_000_000;
@@ -386,11 +386,7 @@ pub fn clocks() -> Clocks {
         // HSE 直出
         0b01 => {
             let f = HSE_HZ.load(Ordering::Relaxed);
-            if f != 0 {
-                f
-            } else {
-                HSI_HZ
-            }
+            if f != 0 { f } else { HSI_HZ }
         }
         // PLL 输出 = 源 ÷ PREDIV × (FBDIV + 2) ÷ POSTDIV
         0b10 => {
@@ -625,7 +621,10 @@ pub fn init(config: Config) -> Result<Clocks, Error> {
 
     // 记下 HSE 频率：外部晶振的频率寄存器里读不到，clocks() 反推 SYSCLK 时要用
     // （本函数末尾返回的也是 clocks() 的反推结果，而不是按配置算出的纸面值）
-    HSE_HZ.store(config.hse.as_ref().map(|h| h.freq.0).unwrap_or(0), Ordering::Relaxed);
+    HSE_HZ.store(
+        config.hse.as_ref().map(|h| h.freq.0).unwrap_or(0),
+        Ordering::Relaxed,
+    );
 
     // ---- 1. 频率计算与校验（DS：HCLK ≤ 170 MHz，PCLK ≤ 85 MHz）----
     let sysclk_hz;
@@ -736,7 +735,15 @@ pub fn init(config: Config) -> Result<Clocks, Error> {
         w
     });
 
-    // ---- 7. 返回**按寄存器反推**的实际频率（而不是按配置算的纸面值）----
+    // ---- 7. 始终打开 SYSCFG 时钟 ----
+    //
+    // SYSCFG 复位后时钟关闭（RCC_APB2ENR.SYSCFGEN=0）。后续 EXTI 映射
+    // （EXTICR1-4）、部分引脚重映射、UCPD/CAN/ETH PHY 选择都要写 SYSCFG 寄存器，
+    // 在时钟未开时所有写入静默失效；这里与 embassy-stm32 0.6 的 `init()` 对齐，
+    // 显式 `enable_apb2(SYSCFGEN)` 一次，保证后续 HAL 直接 `pac::SYSCFG.*` 写得出。
+    enable_apb2(1 << 0); // APB2ENR.SYSCFGEN = bit0（位名见 `rcc.apb2enr.syscfgen`）
+
+    // ---- 8. 返回**按寄存器反推**的实际频率（而不是按配置算的纸面值）----
     // SWS / HPRE / PPRE / CFGR3 若与预期不符，返回值会立刻体现出来；HSE 频率已在开头记入 HSE_HZ。
     Ok(clocks())
 }

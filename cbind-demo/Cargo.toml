@@ -1,0 +1,26 @@
+[package]
+name = "cbind-demo"
+version = "0.1.0"
+edition = "2021"
+description = "示例：用 py32e407cbind-rs（PUYA 官方 C LL 驱动的 FFI 封装）走一遍 PY32E407 正常启动流程，并让 PC3 每 1ms 翻转一次"
+
+[dependencies]
+# RTT 日志：经 SWD 直接打到 probe-rs 终端，不占用 UART
+defmt = "0.3"
+defmt-rtt = "0.4"
+# 提供 #[entry]（Reset 处理、向量表、.data/.bss 初始化、FPU 使能）
+cortex-m-rt = "0.7.5"
+# 提供 critical-section 的单核实现：defmt-rtt 内部要用 critical-section 做日志互斥，
+# 没有它链接会报 undefined symbol `_critical_section_1_0_acquire` / `_release`。
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+# 本示例的主角：官方 C LL 驱动的 bindgen/cc FFI 绑定。
+# 它自己带一层 shim（csrc/ll_shim.h），把 LL 头里 static inline、无法 FFI 的函数
+# 外部化成 <官方名>__ext 再别名回官方名 —— 所以这里**不需要 py32e407-pac**，
+# 全片寄存器操作都由官方 C LL 驱动完成（见 src/main.rs 顶部说明）。
+py32e407cbind-rs = { path = "../py32e407cbind-rs" }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+debug = true

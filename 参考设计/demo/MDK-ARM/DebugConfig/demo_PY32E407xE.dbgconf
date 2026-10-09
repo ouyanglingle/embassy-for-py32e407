@@ -1,0 +1,48 @@
+// File: PY32E407xx.dbgconf
+// Version: 1.0.0
+
+// <<< Use Configuration Wizard in Context Menu >>>
+
+// <h> Debug MCU configuration register (DBGMCU_CR1)
+//   <o.30>  DBG_TIM11_STOP           <i> TIM11 counter stopped when core is halted
+//   <o.29>  DBG_TIM10_STOP           <i> TIM10 counter stopped when core is halted
+//   <o.28>  DBG_TIM9_STOP            <i> TIM9 counter stopped when core is halted
+//   <o.27>  DBG_TIM14_STOP           <i> TIM14 counter stopped when core is halted
+//   <o.26>  DBG_TIM13_STOP           <i> TIM13 counter stopped when core is halted
+//   <o.25>  DBG_TIM12_STOP           <i> TIM12 counter stopped when core is halted
+//   <o.20>  DBG_TIM7_STOP            <i> TIM7 counter stopped when core is halted
+//   <o.19>  DBG_TIM6_STOP            <i> TIM6 counter stopped when core is halted
+//   <o.18>  DBG_TIM5_STOP            <i> TIM5 counter stopped when core is halted
+//   <o.17>  DBG_TIM8_STOP            <i> TIM8 counter stopped when core is halted
+//   <o.16>  DBG_I2C2_SMBUS_TIMEOUT   <i> I2C2_SMBUS_TIMEOUT counter stopped when core is halted
+//   <o.15>  DBG_I2C1_SMBUS_TIMEOUT   <i> I2C1_SMBUS_TIMEOUT counter stopped when core is halted
+//   <o.14>  DBG_CAN1_STOP            <i> CAN1 counter stopped when core is halted
+//   <o.13>  DBG_TIM4_STOP            <i> TIM4 counter stopped when core is halted
+//   <o.12>  DBG_TIM3_STOP            <i> TIM3 counter stopped when core is halted
+//   <o.11>  DBG_TIM2_STOP            <i> TIM2 counter stopped when core is halted
+//   <o.10>  DBG_TIM1_STOP            <i> TIM1 counter stopped when core is halted
+//   <o.9>  DBG_WWDG_STOP             <i> WWDG counter stopped when core is halted
+//   <o.8>  DBG_IWDG_STOP             <i> IWDG counter stopped when core is halted
+//                                    <i> Reserved bits must be kept at reset value
+//   <o.2>  DBG_STANDBY               <i> Debug Standby Mode
+//   <o.1>  DBG_STOP                  <i> Debug Stop Mode
+//   <o.0>  DBG_SLEEP                 <i> Debug Sleep Mode
+// </h>
+DbgMCU_CR1 = 0x00000007;
+
+
+// <h> Debug MCU configuration register (DBGMCU_CR2)
+
+//   <o.8>  DBG_LPTIM_STOP              <i> LPTIM counter stopped when core is halted
+//   <o.7>  DBG_TIM19_STOP              <i> TIM19 counter stopped when core is halted
+//   <o.6>  DBG_TIM18_STOP              <i> TIM18 counter stopped when core is halted
+//   <o.5>  DBG_TIM17_STOP              <i> TIM17 counter stopped when core is halted
+//   <o.4>  DBG_TIM16_STOP              <i> TIM16 counter stopped when core is halted
+//   <o.3>  DBG_TIM15_STOP              <i> TIM15 counter stopped when core is halted
+//   <o.2>  DBG_CAN2_STOP               <i> IWDG counter stopped when core is halted
+//   <o.1>  DBG_I2C4_SMBUS_TIMEOUT      <i> I2C4_SMBUS_TIMEOUT counter stopped when core is halted
+//   <o.0>  DBG_I2C3_SMBUS_TIMEOUT      <i> I2C3_SMBUS_TIMEOUT counter stopped when core is halted
+// </h>
+DbgMCU_CR2 = 0x00000000;
+
+// <<< end of configuration section >>>

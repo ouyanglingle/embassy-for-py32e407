@@ -1,0 +1,264 @@
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_adc.c: In function 'LL_ADC_CommonDeInit':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_adc.c:359:59: warning: unused parameter 'ADCxy_COMMON' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   359 | ErrorStatus LL_ADC_CommonDeInit(const ADC_Common_TypeDef *ADCxy_COMMON)
+warning: py32e407cbind-rs@0.1.0:       |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_comp.c:33:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_EnableVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:618:65: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   618 | __STATIC_INLINE void LL_COMP_EnableVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                   ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_DisableVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:629:66: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   629 | __STATIC_INLINE void LL_COMP_DisableVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_IsEnabledVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:641:72: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   641 | __STATIC_INLINE uint32_t LL_COMP_IsEnabledVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                          ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_SetVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:716:62: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   716 | __STATIC_INLINE void LL_COMP_SetVrefCmpDivider(COMP_TypeDef *COMPx, uint32_t VrefCmpDiv)
+warning: py32e407cbind-rs@0.1.0:       |                                                ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_GetVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:790:66: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   790 | __STATIC_INLINE uint32_t LL_COMP_GetVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_SetVrefCmpSource':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:804:61: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   804 | __STATIC_INLINE void LL_COMP_SetVrefCmpSource(COMP_TypeDef *COMPx, uint32_t VrefCmpSource)
+warning: py32e407cbind-rs@0.1.0:       |                                               ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_GetVrefCmpSource':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:817:65: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   817 | __STATIC_INLINE uint32_t LL_COMP_GetVrefCmpSource(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                   ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_SetVrefintVoltage':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:833:62: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   833 | __STATIC_INLINE void LL_COMP_SetVrefintVoltage(COMP_TypeDef *COMPx, uint32_t VrefintVoltage)
+warning: py32e407cbind-rs@0.1.0:       |                                                ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_GetVrefintVoltage':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:881:66: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   881 | __STATIC_INLINE uint32_t LL_COMP_GetVrefintVoltage(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_dac.c: In function 'LL_DAC_DeInit':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_dac.c:147:46: warning: unused parameter 'DACx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   147 | ErrorStatus LL_DAC_DeInit(const DAC_TypeDef *DACx)
+warning: py32e407cbind-rs@0.1.0:       |                           ~~~~~~~~~~~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_i2c.c:35:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_lcdc.c:33:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_IsActiveFlag_BUSY':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:210:66: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   210 | __STATIC_INLINE uint32_t LL_LCDC_IsActiveFlag_BUSY(LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteData_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:278:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   278 |   *((__IO uint16_t *)&LCDCx->DR) = (Data & 0x1FFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadData_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:289:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   289 |   return  (*((__IO uint16_t *)&LCDCx->DR) & 0x1FF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteCommand_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:301:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   301 |   *((__IO uint16_t *)&LCDCx->CMDR) = (Command & 0x1FFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadCommand_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:312:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   312 |   return  (*((__IO uint16_t *)&LCDCx->CMDR) & 0x1FF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteData_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:324:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   324 |   *((__IO uint16_t *)&LCDCx->DR) = (Data & 0xFFFFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadData_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:335:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   335 |   return  (*((__IO uint16_t *)&LCDCx->DR) & 0xFFFFF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteCommand_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:347:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   347 |   *((__IO uint16_t *)&LCDCx->CMDR) = (Command & 0xFFFFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadCommand_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:358:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   358 |   return  (*((__IO uint16_t *)&LCDCx->CMDR) & 0xFFFFF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_EnableDMAReq':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:618:57: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   618 | __STATIC_INLINE void LL_LCDC_EnableDMAReq(LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_DisableDMAReq':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:629:58: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   629 | __STATIC_INLINE void LL_LCDC_DisableDMAReq(LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                            ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_IsEnabledDMAReq':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:640:70: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   640 | __STATIC_INLINE uint32_t LL_LCDC_IsEnabledDMAReq(const LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                                  ~~~~~~~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_lptim.c:35:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_lpuart.c:34:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_rcc.c:33:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_rtc.c:34:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h: In function 'LL_RTC_TAMPER_Disable':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h:465:57: warning: unused parameter 'BKPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   465 | __STATIC_INLINE void LL_RTC_TAMPER_Disable(BKP_TypeDef *BKPx)
+warning: py32e407cbind-rs@0.1.0:       |                                            ~~~~~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h: In function 'LL_RTC_BKP_SetRegister':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h:545:58: warning: unused parameter 'BKPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   545 | __STATIC_INLINE void LL_RTC_BKP_SetRegister(BKP_TypeDef *BKPx, uint32_t BackupRegister, uint32_t Data)
+warning: py32e407cbind-rs@0.1.0:       |                                             ~~~~~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h: In function 'LL_RTC_BKP_GetRegister':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h:595:62: warning: unused parameter 'BKPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   595 | __STATIC_INLINE uint32_t LL_RTC_BKP_GetRegister(BKP_TypeDef *BKPx, uint32_t BackupRegister)
+warning: py32e407cbind-rs@0.1.0:       |                                                 ~~~~~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_spi.c:35:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_uart.c:35:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_usart.c:35:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Src\py32e407_ll_utils.c:32:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: py32e407cbind-rs: LL 头里有 199 个常量没进 bindings.rs（bindgen 解析不了带 `(uint32_t)` 之类强制转换的宏），例如 LL_ADC_AWD_CHANNEL_0_INJ / LL_ADC_AWD_CHANNEL_0_REG / LL_ADC_AWD_CHANNEL_0_REG_INJ / LL_ADC_AWD_CHANNEL_10_INJ / LL_ADC_AWD_CHANNEL_10_REG / LL_ADC_AWD_CHANNEL_10_REG_INJ …。它们不会报错，只会在写代码时表现为「常量不存在」。补法见 src/ll_consts.rs
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\py32e407cbind-rs\target\thumbv7em-none-eabihf\release\build\py32e407cbind-rs-cd54b2169d027330\out\wrapper_gen.h:4,
+warning: py32e407cbind-rs@0.1.0:                  from D:\embassy-for-py32e407\py32e407cbind-rs\target\thumbv7em-none-eabihf\release\build\py32e407cbind-rs-cd54b2169d027330\out\ll_static_fns_ext.c:1:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_EnableVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:618:65: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   618 | __STATIC_INLINE void LL_COMP_EnableVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                   ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_DisableVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:629:66: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   629 | __STATIC_INLINE void LL_COMP_DisableVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_IsEnabledVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:641:72: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   641 | __STATIC_INLINE uint32_t LL_COMP_IsEnabledVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                          ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_SetVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:716:62: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   716 | __STATIC_INLINE void LL_COMP_SetVrefCmpDivider(COMP_TypeDef *COMPx, uint32_t VrefCmpDiv)
+warning: py32e407cbind-rs@0.1.0:       |                                                ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_GetVrefCmpDivider':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:790:66: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   790 | __STATIC_INLINE uint32_t LL_COMP_GetVrefCmpDivider(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_SetVrefCmpSource':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:804:61: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   804 | __STATIC_INLINE void LL_COMP_SetVrefCmpSource(COMP_TypeDef *COMPx, uint32_t VrefCmpSource)
+warning: py32e407cbind-rs@0.1.0:       |                                               ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_GetVrefCmpSource':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:817:65: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   817 | __STATIC_INLINE uint32_t LL_COMP_GetVrefCmpSource(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                   ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_SetVrefintVoltage':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:833:62: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   833 | __STATIC_INLINE void LL_COMP_SetVrefintVoltage(COMP_TypeDef *COMPx, uint32_t VrefintVoltage)
+warning: py32e407cbind-rs@0.1.0:       |                                                ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h: In function 'LL_COMP_GetVrefintVoltage':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_comp.h:881:66: warning: unused parameter 'COMPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   881 | __STATIC_INLINE uint32_t LL_COMP_GetVrefintVoltage(COMP_TypeDef *COMPx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\py32e407cbind-rs\target\thumbv7em-none-eabihf\release\build\py32e407cbind-rs-cd54b2169d027330\out\wrapper_gen.h:12:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_flash.h: In function 'LL_FLASH_SetEraseAddress':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_flash.h:671:62: warning: unused parameter 'FLASHx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   671 | __STATIC_INLINE void LL_FLASH_SetEraseAddress(FLASH_TypeDef *FLASHx,uint32_t address)
+warning: py32e407cbind-rs@0.1.0:       |                                               ~~~~~~~~~~~~~~~^~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_flash.h: In function 'LL_FLASH_TriggerOptionProgramStart':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_flash.h:1018:72: warning: unused parameter 'FLASHx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1018 | __STATIC_INLINE void LL_FLASH_TriggerOptionProgramStart(FLASH_TypeDef *FLASHx)
+warning: py32e407cbind-rs@0.1.0:       |                                                         ~~~~~~~~~~~~~~~^~~~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\py32e407cbind-rs\target\thumbv7em-none-eabihf\release\build\py32e407cbind-rs-cd54b2169d027330\out\wrapper_gen.h:16:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_IsActiveFlag_BUSY':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:210:66: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   210 | __STATIC_INLINE uint32_t LL_LCDC_IsActiveFlag_BUSY(LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                                    ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteData_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:278:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   278 |   *((__IO uint16_t *)&LCDCx->DR) = (Data & 0x1FFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadData_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:289:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   289 |   return  (*((__IO uint16_t *)&LCDCx->DR) & 0x1FF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteCommand_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:301:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   301 |   *((__IO uint16_t *)&LCDCx->CMDR) = (Command & 0x1FFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadCommand_9b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:312:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   312 |   return  (*((__IO uint16_t *)&LCDCx->CMDR) & 0x1FF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteData_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:324:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   324 |   *((__IO uint16_t *)&LCDCx->DR) = (Data & 0xFFFFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadData_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:335:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   335 |   return  (*((__IO uint16_t *)&LCDCx->DR) & 0xFFFFF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_WriteCommand_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:347:5: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   347 |   *((__IO uint16_t *)&LCDCx->CMDR) = (Command & 0xFFFFU);
+warning: py32e407cbind-rs@0.1.0:       |    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_ReadCommand_16b':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:358:14: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: py32e407cbind-rs@0.1.0:   358 |   return  (*((__IO uint16_t *)&LCDCx->CMDR) & 0xFFFFF);
+warning: py32e407cbind-rs@0.1.0:       |             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_EnableDMAReq':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:618:57: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   618 | __STATIC_INLINE void LL_LCDC_EnableDMAReq(LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_DisableDMAReq':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:629:58: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   629 | __STATIC_INLINE void LL_LCDC_DisableDMAReq(LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                            ~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h: In function 'LL_LCDC_IsEnabledDMAReq':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_lcdc.h:640:70: warning: unused parameter 'LCDCx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   640 | __STATIC_INLINE uint32_t LL_LCDC_IsEnabledDMAReq(const LCDC_TypeDef *LCDCx)
+warning: py32e407cbind-rs@0.1.0:       |                                                  ~~~~~~~~~~~~~~~~~~~~^~~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\py32e407cbind-rs\target\thumbv7em-none-eabihf\release\build\py32e407cbind-rs-cd54b2169d027330\out\wrapper_gen.h:21:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h: In function 'LL_RCC_GetMCODiv':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rcc.h:1256:52: warning: unused parameter 'MCOx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:  1256 | __STATIC_INLINE uint32_t LL_RCC_GetMCODiv(uint32_t MCOx)
+warning: py32e407cbind-rs@0.1.0:       |                                           ~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: In file included from D:\embassy-for-py32e407\py32e407cbind-rs\target\thumbv7em-none-eabihf\release\build\py32e407cbind-rs-cd54b2169d027330\out\wrapper_gen.h:23:
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h: In function 'LL_RTC_TAMPER_Disable':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h:465:57: warning: unused parameter 'BKPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   465 | __STATIC_INLINE void LL_RTC_TAMPER_Disable(BKP_TypeDef *BKPx)
+warning: py32e407cbind-rs@0.1.0:       |                                            ~~~~~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h: In function 'LL_RTC_BKP_SetRegister':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h:545:58: warning: unused parameter 'BKPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   545 | __STATIC_INLINE void LL_RTC_BKP_SetRegister(BKP_TypeDef *BKPx, uint32_t BackupRegister, uint32_t Data)
+warning: py32e407cbind-rs@0.1.0:       |                                             ~~~~~~~~~~~~~^~~~
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h: In function 'LL_RTC_BKP_GetRegister':
+warning: py32e407cbind-rs@0.1.0: D:\embassy-for-py32e407\参考设计\PY32E407_Firmware_V0.7.0\Drivers\PY32E407_HAL_Driver\Inc/py32e407_ll_rtc.h:595:62: warning: unused parameter 'BKPx' [-Wunused-parameter]
+warning: py32e407cbind-rs@0.1.0:   595 | __STATIC_INLINE uint32_t LL_RTC_BKP_GetRegister(BKP_TypeDef *BKPx, uint32_t BackupRegister)
+warning: py32e407cbind-rs@0.1.0:       |                                                 ~~~~~~~~~~~~~^~~~
+   Compiling py32e407cbind-rs v0.1.0 (D:\embassy-for-py32e407\py32e407cbind-rs)
+    Finished `release` profile [optimized] target(s) in 1.74s
